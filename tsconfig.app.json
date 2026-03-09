@@ -26,7 +26,14 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["app/*"]
+      "@/*": ["app/*"],
+      "@modules/*": ["app/modules/*"],
+      "@redux/*": ["app/redux/*"],
+      "@routes/*": ["app/routes/*"],
+      "@utils/*": ["app/utils/*"],
+      "@assets/*": ["app/assets/*"],
+      "@hooks/*": ["app/hooks/*"],
+      "@shared/*": ["app/shared/*"]
     }
   },
   "include": ["app"],

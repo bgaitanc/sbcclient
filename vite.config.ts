@@ -8,7 +8,14 @@ export default defineConfig({
   plugins: [reactRouter(), tailwindcss()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './app')
+      '@': resolve(__dirname, './app'),
+      '@modules': resolve(__dirname, './app/modules'),
+      '@redux': resolve(__dirname, './app/redux'),
+      '@routes': resolve(__dirname, './app/routes'),
+      '@utils': resolve(__dirname, './app/utils'),
+      '@assets': resolve(__dirname, './app/assets'),
+      '@hooks': resolve(__dirname, './app/hooks'),
+      '@shared': resolve(__dirname, './app/shared')
     }
   }
 })

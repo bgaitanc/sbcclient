@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5173",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -18,15 +18,16 @@
     "@mui/material": "^7.3.9",
     "@react-router/node": "^7.13.1",
     "@reduxjs/toolkit": "^2.11.2",
+    "formik": "^2.4.9",
     "isbot": "^5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.13.1",
-    "react-router-dom": "^7.13.1"
+    "react-router-dom": "^7.13.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
     "@react-router/dev": "^7.13.1",
     "@tailwindcss/vite": "^4.2.1",
     "@types/node": "^24.10.1",
@@ -36,7 +37,6 @@
     "eslint": "^9.39.1",
     "eslint-config-love": "^116.0.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-prettier": "^5.5.5",

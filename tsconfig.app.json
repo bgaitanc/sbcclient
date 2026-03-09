@@ -29,5 +29,6 @@
       "@/*": ["app/*"]
     }
   },
-  "include": ["app", ".react-router/types"]
+  "include": ["app"],
+  "exclude": [".react-router"]
 }

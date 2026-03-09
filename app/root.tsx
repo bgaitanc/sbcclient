@@ -2,6 +2,8 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import { StrictMode } from 'react'
 import { StyledEngineProvider } from '@mui/material/styles'
 import { CssBaseline, GlobalStyles } from '@mui/material'
+import { Provider } from 'react-redux'
+import { store } from './redux/store'
 import './index.css'
 import * as React from 'react'
 
@@ -17,11 +19,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <StrictMode>
-          <StyledEngineProvider enableCssLayer>
-            <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
-            <CssBaseline />
-            {children}
-          </StyledEngineProvider>
+          <Provider store={store}>
+            <StyledEngineProvider enableCssLayer>
+              <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
+              <CssBaseline />
+              {children}
+            </StyledEngineProvider>
+          </Provider>
         </StrictMode>
         <ScrollRestoration />
         <Scripts />

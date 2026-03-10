@@ -3,7 +3,7 @@ import type { LoginRes } from '@shared/types/login/loginValues.ts'
 
 interface User {
   userId: string
-  userName: string
+  userName?: string
   email: string
   roles: string[]
 }

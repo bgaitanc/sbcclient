@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router'
-import { useAppSelector } from '../redux/hooks'
-import { selectIsAuthenticated } from '../redux/slices/authSlice'
+import { useAppSelector } from '@redux/hooks.ts'
+import { selectIsAuthenticated } from '@redux/slices/authSlice.ts'
 import { useEffect } from 'react'
 
 export default function AuthLayout() {

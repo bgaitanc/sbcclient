@@ -1,3 +1,5 @@
+import { Typography } from '@mui/material'
+
 export default function Dashboard() {
-  return <div>Dashboard</div>
+  return <Typography variant="h5">Seleccione una opción del menú.</Typography>
 }

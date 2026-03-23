@@ -2,10 +2,16 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '../store'
 import type { SuccessResponse } from '@shared/types/common/global.ts'
 import type { LoginReq, LoginRes } from '@shared/types/login/loginValues.ts'
+import type {
+  Account,
+  CreateAccountReq,
+  UpdateAccountReq
+} from '@shared/types/accounts/accountTypes.ts'
 
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
+  tagTypes: ['Accounts'],
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5164/api', // TODO: Replace with real base URL
     prepareHeaders: (headers, { getState }) => {
@@ -25,10 +31,47 @@ export const apiSlice = createApi({
         method: 'POST',
         body: credentials
       })
+    }),
+    getAccountsTree: builder.query<SuccessResponse<Account[]>, void>({
+      query: () => '/accounts/tree',
+      providesTags: ['Accounts']
+    }),
+    createAccount: builder.mutation<SuccessResponse<Account>, CreateAccountReq>(
+      {
+        query: (newAccount) => ({
+          url: '/accounts',
+          method: 'POST',
+          body: newAccount
+        }),
+        invalidatesTags: ['Accounts']
+      }
+    ),
+    updateAccount: builder.mutation<SuccessResponse<Account>, UpdateAccountReq>(
+      {
+        query: (updatedAccount) => ({
+          url: '/accounts',
+          method: 'PUT',
+          body: updatedAccount
+        }),
+        invalidatesTags: ['Accounts']
+      }
+    ),
+    deleteAccount: builder.mutation<SuccessResponse<void>, string>({
+      query: (accountId) => ({
+        url: `/accounts/${accountId}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['Accounts']
     })
   })
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useLoginMutation } = apiSlice
+export const {
+  useLoginMutation,
+  useGetAccountsTreeQuery,
+  useCreateAccountMutation,
+  useUpdateAccountMutation,
+  useDeleteAccountMutation
+} = apiSlice

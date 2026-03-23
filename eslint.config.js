@@ -39,7 +39,8 @@ export default tseslint.config(
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      'import/no-absolute-path': 'off'
+      'import/no-absolute-path': 'off',
+      '@typescript-eslint/no-invalid-void-type': 'off'
     }
   }
 )

@@ -5,3 +5,53 @@
 @import '@fontsource/roboto/400.css';
 @import '@fontsource/roboto/500.css';
 @import '@fontsource/roboto/700.css';
+
+@theme {
+  /* Mapeo de Tailwind v4 a variables de MUI */
+  --color-primary: var(--mui-palette-primary-main);
+  --color-on-primary: var(--mui-palette-primary-contrastText);
+  --color-secondary: var(--mui-palette-secondary-main);
+  --color-on-secondary: var(--mui-palette-secondary-contrastText);
+  --color-error: var(--mui-palette-error-main);
+  --color-on-error: var(--mui-palette-error-contrastText);
+  --color-background: var(--mui-palette-background-default);
+  --color-on-background: var(--mui-palette-text-primary);
+  --color-surface: var(--mui-palette-background-paper);
+  --color-on-surface: var(--mui-palette-text-primary);
+  --color-on-surface-variant: var(--mui-palette-text-secondary);
+}
+
+/* MUI manejará el modo oscuro automáticamente vía colorSchemeSelector: 'class' */
+@layer base {
+  :root {
+    --color-primary-container: #cdeda3;
+    --color-on-primary-container: #354e16;
+    --color-secondary-container: #dce7c8;
+    --color-on-secondary-container: #404a33;
+    --color-tertiary: #386663;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #bcece7;
+    --color-on-tertiary-container: #1f4e4b;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+    --color-surface-variant: #e1e4d5;
+    --color-outline: #75796c;
+    --color-outline-variant: #c5c8ba;
+  }
+
+  :where(.dark, .dark *) {
+    --color-primary-container: #354e16;
+    --color-on-primary-container: #cdeda3;
+    --color-secondary-container: #404a33;
+    --color-on-secondary-container: #dce7c8;
+    --color-tertiary: #a0d0cb;
+    --color-on-tertiary: #003735;
+    --color-tertiary-container: #1f4e4b;
+    --color-on-tertiary-container: #bcece7;
+    --color-error-container: #93000a;
+    --color-on-error-container: #ffdad6;
+    --color-surface-variant: #44483d;
+    --color-outline: #8f9285;
+    --color-outline-variant: #44483d;
+  }
+}

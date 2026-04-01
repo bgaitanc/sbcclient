@@ -27,7 +27,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <body>
         <Provider store={store}>
           <StyledEngineProvider enableCssLayer>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} modeStorageKey="sbc-theme-mode">
               <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
               <CssBaseline />
               {children}

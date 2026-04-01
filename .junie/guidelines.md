@@ -9,13 +9,16 @@ The `sbcclient` is a modern web application built with the following technologie
 - **Framework:** React 19
 - **Language:** TypeScript
 - **Build Tool:** Vite 7
+- **CSS Framework:** TailwindCSS 4
+- **UI Library:** Material UI 7
 - **Package Manager:** pnpm
 
 ### Project Structure
 
-- `src/`: Contains the application source code.
-  - `main.tsx`: Entry point of the application.
-  - `App.tsx`: Main component of the application.
+- `app/`: Contains the application source code.
+  - `root.tsx`: Root component of the application.
+  - `routes.ts`: Route definitions.
+  - `routes/`: Page components and route handlers.
   - `assets/`: Static assets like images and SVG files.
 - `public/`: Public assets that are served directly.
 - `dist/`: Output directory for the production build.

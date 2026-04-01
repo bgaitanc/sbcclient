@@ -11,6 +11,8 @@ The `sbcclient` is a modern web application built with the following technologie
 - **Build Tool:** Vite 7
 - **CSS Framework:** TailwindCSS 4
 - **UI Library:** Material UI 7
+- **Form Management:** Formik 2.4.9
+- **Validation Schema:** Yup 1.7.1
 - **Package Manager:** pnpm
 
 ### Project Structure
@@ -53,6 +55,12 @@ The `sbcclient` is a modern web application built with the following technologie
 - Use TypeScript for all new code.
 - Run `pnpm format` to ensure code is properly formatted.
 - Ensure that `pnpm lint` passes after any changes.
+
+### Forms and Validations
+
+- **Formik:** Always use the `useFormik` hook for form handling.
+- **Yup:** Create validation schemas in separate `*.schema.ts` files.
+- Ensure that form fields are properly typed to match the Yup schema and the API DTOs.
 
 ### Testing
 

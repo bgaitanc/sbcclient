@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Box,
   Button,
@@ -39,53 +38,41 @@ export const JournalEntryForm = ({
   onSuccess,
   onCancel
 }: JournalEntryFormProps) => {
-  const { handleCreate, handleUpdate, isLoading } = useJournalEntryActions()
+  const { formik, isLoading, validateBalance } = useJournalEntryActions(
+    initialData,
+    onSuccess
+  )
   const { data: accountsResponse } = useGetAccountsTreeQuery()
-
-  const [date, setDate] = useState(
-    initialData?.date
-      ? new Date(initialData.date).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0]
-  )
-  const [description, setDescription] = useState(initialData?.description ?? '')
-  const [lines, setLines] = useState<CreateJournalEntryLineReq[]>(
-    initialData?.lines.map((l) => ({
-      accountId: l.accountId,
-      debit: l.debit,
-      credit: l.credit
-    })) ?? [
-      { accountId: '', debit: 0, credit: 0 },
-      { accountId: '', debit: 0, credit: 0 }
-    ]
-  )
-
-  const [error, setError] = useState<string | null>(null)
 
   // Obtener lista plana de cuentas para el select
   const flattenAccounts = (accounts: Account[]): Account[] => {
     let result: Account[] = []
     accounts.forEach((acc) => {
       result.push(acc)
-      if (acc.children && acc.children.length > 0) {
-        result = result.concat(flattenAccounts(acc.children))
+      const { children } = acc
+      if (children != null && children.length > 0) {
+        result = result.concat(flattenAccounts(children))
       }
     })
     return result
   }
 
-  const accountList = accountsResponse?.data
-    ? flattenAccounts(accountsResponse.data)
-    : []
+  const accountList =
+    accountsResponse?.data != null ? flattenAccounts(accountsResponse.data) : []
 
   const handleAddLine = () => {
-    setLines([...lines, { accountId: '', debit: 0, credit: 0 }])
+    const newLines = [
+      ...formik.values.lines,
+      { accountId: '', debit: 0, credit: 0 }
+    ]
+    void formik.setFieldValue('lines', newLines)
   }
 
   const handleRemoveLine = (index: number) => {
-    if (lines.length <= 2) return
-    const newLines = [...lines]
+    if (formik.values.lines.length <= 2) return
+    const newLines = [...formik.values.lines]
     newLines.splice(index, 1)
-    setLines(newLines)
+    void formik.setFieldValue('lines', newLines)
   }
 
   const handleLineChange = (
@@ -93,106 +80,83 @@ export const JournalEntryForm = ({
     field: keyof CreateJournalEntryLineReq,
     value: string | number
   ) => {
-    const newLines = [...lines]
-    newLines[index] = { ...newLines[index], [field]: value }
+    const newLines = [...formik.values.lines]
+    const updatedLine = { ...newLines[index], [field]: value }
 
-    // Si se edita el debe, el haber debería ser 0 (o viceversa) en la mayoría de los casos simples
-    // Pero permitimos ambos para casos complejos si fuera necesario.
-    // Aquí implementamos una lógica simple de "limpiar el otro campo" para facilitar la entrada.
+    // Si se edita el debe, el haber debería ser 0 (o viceversa)
     if (field === 'debit' && Number(value) > 0) {
-      newLines[index].credit = 0
+      updatedLine.credit = 0
     } else if (field === 'credit' && Number(value) > 0) {
-      newLines[index].debit = 0
+      updatedLine.debit = 0
     }
 
-    setLines(newLines)
+    newLines[index] = updatedLine
+    void formik.setFieldValue('lines', newLines)
   }
 
-  const totalDebit = lines.reduce((sum, l) => sum + (Number(l.debit) || 0), 0)
-  const totalCredit = lines.reduce((sum, l) => sum + (Number(l.credit) || 0), 0)
-  const isBalanced = Math.abs(totalDebit - totalCredit) < 0.01
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-
-    if (!description) {
-      setError('La descripción es obligatoria')
-      return
-    }
-
-    if (!isBalanced) {
-      setError('El asiento no está balanceado (Partida Doble)')
-      return
-    }
-
-    if (lines.some((l) => !l.accountId)) {
-      setError('Todas las líneas deben tener una cuenta seleccionada')
-      return
-    }
-
-    if (lines.some((l) => l.debit === 0 && l.credit === 0)) {
-      setError('Todas las líneas deben tener un monto en el Debe o en el Haber')
-      return
-    }
-
-    try {
-      if (initialData) {
-        await handleUpdate({
-          id: initialData.id,
-          date,
-          description,
-          lines: lines.map((l, index) => ({
-            ...l,
-            id: initialData.lines[index]?.id // Intentar mapear IDs existentes si es posible
-          }))
-        })
-      } else {
-        await handleCreate({
-          date,
-          description,
-          lines
-        })
-      }
-      onSuccess()
-    } catch (err: any) {
-      setError(err.data?.message || 'Ocurrió un error al guardar el asiento')
-    }
-  }
+  const totalDebit = formik.values.lines.reduce(
+    (sum, l) => sum + (l.debit !== 0 ? Number(l.debit) : 0),
+    0
+  )
+  const totalCredit = formik.values.lines.reduce(
+    (sum, l) => sum + (l.credit !== 0 ? Number(l.credit) : 0),
+    0
+  )
+  const isBalanced = validateBalance(formik.values.lines)
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
+    <Box component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
       <Typography variant="h5" gutterBottom>
-        {initialData ? 'Editar Asiento Contable' : 'Nuevo Asiento Contable'}
+        {initialData != null
+          ? 'Editar Asiento Contable'
+          : 'Nuevo Asiento Contable'}
       </Typography>
 
-      {error != null && (
+      {formik.submitCount > 0 && !formik.isValid && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {Object.values(formik.errors).map((err, i) => (
+            <div key={i}>
+              {typeof err === 'string' ? err : 'Error en el formulario'}
+            </div>
+          ))}
         </Alert>
       )}
 
       <Stack spacing={3} mb={4}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <TextField
+            fullWidth
+            id="date"
+            name="date"
             label="Fecha"
             type="date"
-            value={date}
-            onChange={(e) => {
-              setDate(e.target.value)
-            }}
-            InputLabelProps={{ shrink: true }}
-            required
+            value={formik.values.date}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.date === true && formik.errors.date != null}
+            helperText={
+              formik.touched.date === true ? formik.errors.date : undefined
+            }
+            slotProps={{ inputLabel: { shrink: true } }}
             sx={{ width: { sm: '250px' } }}
           />
           <TextField
-            label="Descripción"
-            value={description}
-            onChange={(e) => {
-              setDescription(e.target.value)
-            }}
             fullWidth
-            required
+            id="description"
+            name="description"
+            label="Descripción"
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.description === true &&
+              formik.errors.description != null
+            }
+            helperText={
+              formik.touched.description === true
+                ? formik.errors.description
+                : undefined
+            }
           />
         </Stack>
 
@@ -207,18 +171,33 @@ export const JournalEntryForm = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {lines.map((line, index) => (
+              {formik.values.lines.map((line, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     <TextField
                       select
                       fullWidth
                       size="small"
+                      name={`lines[${index}].accountId`}
                       value={line.accountId}
                       onChange={(e) => {
                         handleLineChange(index, 'accountId', e.target.value)
                       }}
-                      required
+                      error={
+                        formik.touched.lines?.[index]?.accountId === true &&
+                        formik.errors.lines?.[index] != null
+                      }
+                      helperText={
+                        formik.touched.lines?.[index]?.accountId === true &&
+                        typeof formik.errors.lines?.[index] === 'object' &&
+                        formik.errors.lines[index] !== null
+                          ? (
+                              formik.errors.lines[index] as {
+                                accountId?: string
+                              }
+                            ).accountId
+                          : undefined
+                      }
                     >
                       {accountList.map((acc) => (
                         <MenuItem key={acc.id} value={acc.id}>
@@ -231,11 +210,13 @@ export const JournalEntryForm = ({
                     <TextField
                       type="number"
                       size="small"
+                      name={`lines[${index}].debit`}
                       value={line.debit}
                       onChange={(e) => {
                         handleLineChange(index, 'debit', Number(e.target.value))
                       }}
-                      inputProps={{ step: '0.01', min: '0' }}
+                      onBlur={formik.handleBlur}
+                      slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
                       fullWidth
                     />
                   </TableCell>
@@ -243,6 +224,7 @@ export const JournalEntryForm = ({
                     <TextField
                       type="number"
                       size="small"
+                      name={`lines[${index}].credit`}
                       value={line.credit}
                       onChange={(e) => {
                         handleLineChange(
@@ -251,7 +233,8 @@ export const JournalEntryForm = ({
                           Number(e.target.value)
                         )
                       }}
-                      inputProps={{ step: '0.01', min: '0' }}
+                      onBlur={formik.handleBlur}
+                      slotProps={{ htmlInput: { step: '0.01', min: '0' } }}
                       fullWidth
                     />
                   </TableCell>
@@ -261,7 +244,7 @@ export const JournalEntryForm = ({
                       onClick={() => {
                         handleRemoveLine(index)
                       }}
-                      disabled={lines.length <= 2}
+                      disabled={formik.values.lines.length <= 2}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -310,6 +293,11 @@ export const JournalEntryForm = ({
             {(totalDebit - totalCredit).toFixed(2)}
           </Typography>
         )}
+        {typeof formik.errors.lines === 'string' && (
+          <Typography variant="caption" color="error">
+            * {formik.errors.lines}
+          </Typography>
+        )}
       </Stack>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
@@ -319,10 +307,10 @@ export const JournalEntryForm = ({
         <Button
           variant="contained"
           type="submit"
-          disabled={isLoading || !isBalanced}
+          disabled={isLoading || !isBalanced || !formik.isValid}
           startIcon={isLoading ? <CircularProgress size={20} /> : <SaveIcon />}
         >
-          {initialData ? 'Actualizar Asiento' : 'Guardar Asiento'}
+          {initialData != null ? 'Actualizar Asiento' : 'Guardar Asiento'}
         </Button>
       </Box>
     </Box>

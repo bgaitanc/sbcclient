@@ -151,10 +151,10 @@ export default function MainLayout() {
                         : 'surfaceVariant.contrastText',
                       '&:hover': {
                         bgcolor: isActive
-                        ? 'primary.main'
-                        : theme.palette.mode === 'dark'
-                          ? 'rgba(255, 255, 255, 0.08)'
-                          : 'rgba(0, 0, 0, 0.04)'
+                          ? 'primary.main'
+                          : theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.08)'
+                            : 'rgba(0, 0, 0, 0.04)'
                       }
                     }}
                   >

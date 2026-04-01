@@ -30,7 +30,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <ThemeProvider
               theme={theme}
               modeStorageKey="sbc-theme-mode"
-              defaultMode="light"
+              defaultMode="dark"
             >
               <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
               <CssBaseline />

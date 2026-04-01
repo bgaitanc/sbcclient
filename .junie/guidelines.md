@@ -22,6 +22,15 @@ The `sbcclient` is a modern web application built with the following technologie
 - `vite.config.ts`: Vite configuration for the build process.
 - `tsconfig.json`: TypeScript configuration files.
 
+### Related Projects
+
+- `../SBC/`: Contains the backend API project.
+  - `SBC.Api/`: The main API project with controllers and endpoints.
+    - `SBC.Api.http`: Use this file to review the available endpoints and examples of requests.
+  - `SBC.Domain/` and `SBC.Domain.Entities/`: Domain logic and data models.
+  - `SBC.Application/` and `SBC.Application.Models/`: Application services and DTOs.
+  - `SBC.Infrastructure/`: Infrastructure concerns like database access.
+
 ## Development Workflow
 
 ### Available Scripts
@@ -47,3 +56,9 @@ The `sbcclient` is a modern web application built with the following technologie
 
 ### Submitting Results
 - Before submitting, verify that the code compiles and follows the project's linting rules.
+
+### Cross-Project Analysis
+- When modifying the frontend, you should check the API project in `../SBC/` for relevant endpoints, models, and business logic.
+- Always check the `../SBC/SBC.Api/SBC.Api.http` file for a clear definition of the available endpoints and how to consume them.
+- Ensure that frontend types match the DTOs defined in the `SBC.Application.Models` or `SBC.Api` projects.
+- You have permission to read files in the `../SBC/` directory to understand the full stack implementation.

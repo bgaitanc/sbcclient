@@ -17,7 +17,8 @@ import type {
 } from '@shared/types/accounts/accountTypes.ts'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:5164/api', // TODO: Replace with real base URL
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
+  baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: (headers, { getState }) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Standard Redux Toolkit pattern
     const { auth } = getState() as RootState

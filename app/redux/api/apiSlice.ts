@@ -24,6 +24,11 @@ import type {
   BalanceSheet,
   IncomeStatement
 } from '@shared/types/reports/reportTypes.ts'
+import type {
+  AccountingPeriod,
+  CreateAccountingPeriodReq,
+  ClosePeriodReq
+} from '@shared/types/accountingPeriods/accountingPeriodTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -96,7 +101,7 @@ const baseQueryWithReauth: BaseQueryFn<
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Accounts', 'JournalEntries', 'Reports'],
+  tagTypes: ['Accounts', 'JournalEntries', 'Reports', 'AccountingPeriods'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     login: builder.mutation<SuccessResponse<LoginRes>, LoginReq>({
@@ -185,6 +190,43 @@ export const apiSlice = createApi({
       query: ({ startDate, endDate }) =>
         `/reports/income-statement?startDate=${startDate}&endDate=${endDate}`,
       providesTags: ['Reports']
+    }),
+    getAccountingPeriods: builder.query<SuccessResponse<AccountingPeriod[]>, void>(
+      {
+        query: () => '/accountingPeriods',
+        providesTags: ['AccountingPeriods']
+      }
+    ),
+    getAccountingPeriod: builder.query<
+      SuccessResponse<AccountingPeriod>,
+      { year: number; month: number }
+    >({
+      query: ({ year, month }) => `/accountingPeriods/${year}/${month}`,
+      providesTags: (_result, _error, { year, month }) => [
+        { type: 'AccountingPeriods', id: `${year}-${month}` }
+      ]
+    }),
+    createAccountingPeriod: builder.mutation<
+      SuccessResponse<AccountingPeriod>,
+      CreateAccountingPeriodReq
+    >({
+      query: (newPeriod) => ({
+        url: '/accountingPeriods',
+        method: 'POST',
+        body: newPeriod
+      }),
+      invalidatesTags: ['AccountingPeriods']
+    }),
+    closeAccountingPeriod: builder.mutation<
+      SuccessResponse<AccountingPeriod>,
+      ClosePeriodReq
+    >({
+      query: (closeData) => ({
+        url: '/accountingPeriods/close',
+        method: 'POST',
+        body: closeData
+      }),
+      invalidatesTags: ['AccountingPeriods', 'JournalEntries']
     })
   })
 })
@@ -203,5 +245,9 @@ export const {
   useUpdateJournalEntryMutation,
   useDeleteJournalEntryMutation,
   useGetBalanceSheetQuery,
-  useGetIncomeStatementQuery
+  useGetIncomeStatementQuery,
+  useGetAccountingPeriodsQuery,
+  useGetAccountingPeriodQuery,
+  useCreateAccountingPeriodMutation,
+  useCloseAccountingPeriodMutation
 } = apiSlice

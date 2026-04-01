@@ -13,6 +13,7 @@ export default [
       route('journalEntries', 'routes/JournalEntries.tsx'),
       route('batch', 'routes/Batch.tsx'),
       route('reports', 'routes/Reports.tsx'),
+      route('periods', 'routes/AccountingPeriods.tsx'),
       route('logs', 'routes/Logs.tsx')
     ])
   ]),

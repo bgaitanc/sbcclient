@@ -1,16 +1,21 @@
 import {
   Box,
   Button,
+  IconButton,
   InputAdornment,
   TextField,
   Typography
 } from '@mui/material'
 import PersonIcon from '@mui/icons-material/Person'
 import LockIcon from '@mui/icons-material/Lock'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import { useState } from 'react'
 import { useLoginActions } from '@modules/login/hooks/useLoginActions.ts'
 
 function Login() {
   const { formik, error } = useLoginActions()
+  const [showPassword, setShowPassword] = useState(false)
 
   const username = formik.getFieldMeta<string>('username')
   const password = formik.getFieldMeta<string>('password')
@@ -60,7 +65,7 @@ function Login() {
         <Box className="flex flex-col mb-3">
           <TextField
             label="Contraseña"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             className="w-full text-slate-300"
             name="password"
             onBlur={formik.handleBlur}
@@ -75,6 +80,20 @@ function Login() {
                 startAdornment: (
                   <InputAdornment position="start">
                     <LockIcon className="text-slate-300" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => {
+                        setShowPassword(!showPassword)
+                      }}
+                      edge="end"
+                      className="text-slate-300"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
                   </InputAdornment>
                 ),
                 className:

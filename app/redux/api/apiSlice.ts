@@ -20,6 +20,10 @@ import type {
   CreateJournalEntryReq,
   UpdateJournalEntryReq
 } from '@shared/types/journalEntries/journalEntryTypes.ts'
+import type {
+  BalanceSheet,
+  IncomeStatement
+} from '@shared/types/reports/reportTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -92,7 +96,7 @@ const baseQueryWithReauth: BaseQueryFn<
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Accounts', 'JournalEntries'],
+  tagTypes: ['Accounts', 'JournalEntries', 'Reports'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     login: builder.mutation<SuccessResponse<LoginRes>, LoginReq>({
@@ -169,6 +173,18 @@ export const apiSlice = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['JournalEntries']
+    }),
+    getBalanceSheet: builder.query<SuccessResponse<BalanceSheet>, string>({
+      query: (date) => `/reports/balance-sheet?date=${date}`,
+      providesTags: ['Reports']
+    }),
+    getIncomeStatement: builder.query<
+      SuccessResponse<IncomeStatement>,
+      { startDate: string; endDate: string }
+    >({
+      query: ({ startDate, endDate }) =>
+        `/reports/income-statement?startDate=${startDate}&endDate=${endDate}`,
+      providesTags: ['Reports']
     })
   })
 })
@@ -185,5 +201,7 @@ export const {
   useGetJournalEntryQuery,
   useCreateJournalEntryMutation,
   useUpdateJournalEntryMutation,
-  useDeleteJournalEntryMutation
+  useDeleteJournalEntryMutation,
+  useGetBalanceSheetQuery,
+  useGetIncomeStatementQuery
 } = apiSlice

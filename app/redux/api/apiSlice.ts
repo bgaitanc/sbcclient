@@ -15,6 +15,11 @@ import type {
   CreateAccountReq,
   UpdateAccountReq
 } from '@shared/types/accounts/accountTypes.ts'
+import type {
+  JournalEntry,
+  CreateJournalEntryReq,
+  UpdateJournalEntryReq
+} from '@shared/types/journalEntries/journalEntryTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -87,7 +92,7 @@ const baseQueryWithReauth: BaseQueryFn<
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Accounts'],
+  tagTypes: ['Accounts', 'JournalEntries'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     login: builder.mutation<SuccessResponse<LoginRes>, LoginReq>({
@@ -127,6 +132,43 @@ export const apiSlice = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['Accounts']
+    }),
+    getJournalEntries: builder.query<SuccessResponse<JournalEntry[]>, void>({
+      query: () => '/journalEntries',
+      providesTags: ['JournalEntries']
+    }),
+    getJournalEntry: builder.query<SuccessResponse<JournalEntry>, string>({
+      query: (id) => `/journalEntries/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'JournalEntries', id }]
+    }),
+    createJournalEntry: builder.mutation<
+      SuccessResponse<JournalEntry>,
+      CreateJournalEntryReq
+    >({
+      query: (newEntry) => ({
+        url: '/journalEntries',
+        method: 'POST',
+        body: newEntry
+      }),
+      invalidatesTags: ['JournalEntries']
+    }),
+    updateJournalEntry: builder.mutation<
+      SuccessResponse<JournalEntry>,
+      UpdateJournalEntryReq
+    >({
+      query: (updatedEntry) => ({
+        url: `/journalEntries/${updatedEntry.id}`,
+        method: 'PUT',
+        body: updatedEntry
+      }),
+      invalidatesTags: ['JournalEntries', { type: 'JournalEntries' }]
+    }),
+    deleteJournalEntry: builder.mutation<SuccessResponse<void>, string>({
+      query: (id) => ({
+        url: `/journalEntries/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['JournalEntries']
     })
   })
 })
@@ -138,5 +180,10 @@ export const {
   useGetAccountsTreeQuery,
   useCreateAccountMutation,
   useUpdateAccountMutation,
-  useDeleteAccountMutation
+  useDeleteAccountMutation,
+  useGetJournalEntriesQuery,
+  useGetJournalEntryQuery,
+  useCreateJournalEntryMutation,
+  useUpdateJournalEntryMutation,
+  useDeleteJournalEntryMutation
 } = apiSlice

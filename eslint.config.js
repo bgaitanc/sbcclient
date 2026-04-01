@@ -12,10 +12,7 @@ export default tseslint.config(
   },
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      love,
-      eslintConfigPrettier
-    ],
+    extends: [love, eslintConfigPrettier],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

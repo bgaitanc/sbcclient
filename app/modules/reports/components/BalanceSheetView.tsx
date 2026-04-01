@@ -37,7 +37,9 @@ export const BalanceSheetView = ({ date }: BalanceSheetViewProps) => {
   const report = data?.data
 
   if (report === undefined) {
-    return <Alert severity="info">No hay datos para la fecha seleccionada.</Alert>
+    return (
+      <Alert severity="info">No hay datos para la fecha seleccionada.</Alert>
+    )
   }
 
   return (

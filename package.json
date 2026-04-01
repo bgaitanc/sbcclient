@@ -8,6 +8,7 @@
     "dev": "vite --port 5173",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier --write .",
     "preview": "vite preview"
   },
   "dependencies": {

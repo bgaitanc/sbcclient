@@ -26,11 +26,12 @@ export const ClosePeriodDialog = ({
   onSuccess,
   period
 }: ClosePeriodDialogProps) => {
-  const { closeFormik, isLoading, equityAccounts } =
-    useAccountingPeriodActions(() => {
+  const { closeFormik, isLoading, equityAccounts } = useAccountingPeriodActions(
+    () => {
       onSuccess()
       onClose()
-    })
+    }
+  )
 
   useEffect(() => {
     if (open && period != null) {
@@ -48,8 +49,12 @@ export const ClosePeriodDialog = ({
       <DialogContent>
         <Stack spacing={3} mt={1}>
           <Typography variant="body1">
-            Se cerrará el periodo <strong>{period?.year} / {period?.month}</strong>.
-            Esta acción generará un asiento de cierre y no permitirá más cambios en este periodo.
+            Se cerrará el periodo{' '}
+            <strong>
+              {period?.year} / {period?.month}
+            </strong>
+            . Esta acción generará un asiento de cierre y no permitirá más
+            cambios en este periodo.
           </Typography>
 
           <TextField

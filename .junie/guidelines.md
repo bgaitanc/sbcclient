@@ -5,6 +5,7 @@ This document provides project-level instructions for Junie to ensure consistenc
 ## Project Overview
 
 The `sbcclient` is a modern web application built with the following technologies:
+
 - **Framework:** React 19
 - **Language:** TypeScript
 - **Build Tool:** Vite 7
@@ -38,26 +39,34 @@ The `sbcclient` is a modern web application built with the following technologie
 - `pnpm dev`: Start the development server.
 - `pnpm build`: Build the project for production.
 - `pnpm lint`: Run ESLint to check for code quality issues.
+- `pnpm format`: Run Prettier to format the code.
 - `pnpm preview`: Preview the production build locally.
 
 ## Guidelines for Junie
 
 ### Code Style
+
 - Follow the existing code style, which is managed by ESLint and Prettier.
 - Use TypeScript for all new code.
+- Run `pnpm format` to ensure code is properly formatted.
 - Ensure that `pnpm lint` passes after any changes.
 
 ### Testing
+
 - Currently, there is no testing framework configured in `package.json`. If you need to add tests, consider using Vitest as it integrates well with Vite.
 - If tests are added later, always run them before submitting your changes.
 
 ### Building
+
 - It is recommended to run `pnpm build` to ensure that there are no TypeScript errors or build issues before submitting your result.
 
 ### Submitting Results
-- Before submitting, verify that the code compiles and follows the project's linting rules.
+
+- Before submitting, verify that the code compiles, is formatted correctly, and follows the project's linting rules.
+- Always run `pnpm format` and `pnpm lint` before finishing a task.
 
 ### Cross-Project Analysis
+
 - When modifying the frontend, you should check the API project in `../SBC/` for relevant endpoints, models, and business logic.
 - Always check the `../SBC/SBC.Api/SBC.Api.http` file for a clear definition of the available endpoints and how to consume them.
 - Ensure that frontend types match the DTOs defined in the `SBC.Application.Models` or `SBC.Api` projects.

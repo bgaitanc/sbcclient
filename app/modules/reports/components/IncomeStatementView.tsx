@@ -43,9 +43,7 @@ export const IncomeStatementView = ({
 
   if (report === undefined) {
     return (
-      <Alert severity="info">
-        No hay datos para el período seleccionado.
-      </Alert>
+      <Alert severity="info">No hay datos para el período seleccionado.</Alert>
     )
   }
 

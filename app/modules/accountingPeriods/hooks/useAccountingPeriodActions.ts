@@ -43,7 +43,9 @@ export const useAccountingPeriodActions = (onSuccess?: () => void) => {
     validationSchema: Yup.object({
       year: Yup.number().required('Requerido'),
       month: Yup.number().required('Requerido'),
-      equityAccountId: Yup.string().required('Debe seleccionar una cuenta de patrimonio')
+      equityAccountId: Yup.string().required(
+        'Debe seleccionar una cuenta de patrimonio'
+      )
     }),
     onSubmit: async (values) => {
       try {

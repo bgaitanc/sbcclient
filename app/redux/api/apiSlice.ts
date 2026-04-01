@@ -191,12 +191,13 @@ export const apiSlice = createApi({
         `/reports/income-statement?startDate=${startDate}&endDate=${endDate}`,
       providesTags: ['Reports']
     }),
-    getAccountingPeriods: builder.query<SuccessResponse<AccountingPeriod[]>, void>(
-      {
-        query: () => '/accountingPeriods',
-        providesTags: ['AccountingPeriods']
-      }
-    ),
+    getAccountingPeriods: builder.query<
+      SuccessResponse<AccountingPeriod[]>,
+      void
+    >({
+      query: () => '/accountingPeriods',
+      providesTags: ['AccountingPeriods']
+    }),
     getAccountingPeriod: builder.query<
       SuccessResponse<AccountingPeriod>,
       { year: number; month: number }

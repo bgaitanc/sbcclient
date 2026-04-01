@@ -21,17 +21,22 @@ function Login() {
   const password = formik.getFieldMeta<string>('password')
 
   return (
-    <Box className="flex items-center justify-center h-screen bg-slate-200">
-      <Box className="bg-slate-800 p-6 rounded shadow-md w-80 text-slate-300">
-        <Typography className="text-xl font-bold mb-4 text-center">
+    <Box className="flex items-center justify-center h-screen bg-background">
+      <Box className="bg-surface-variant p-6 rounded-xl shadow-lg w-96 text-on-surface-variant border border-outline-variant">
+        <Typography className="text-2xl font-bold mb-6 text-center text-primary">
           Iniciar Sesión
         </Typography>
 
         {!(error === '') && (
-          <Typography className="text-red-500 text-sm mb-2">{error}</Typography>
+          <Typography
+            color="error"
+            className="text-sm mb-4 text-center font-medium"
+          >
+            {error}
+          </Typography>
         )}
 
-        <Box className="flex flex-col mb-3">
+        <Box className="flex flex-col mb-4">
           <TextField
             label="Usuario"
             className="w-full"
@@ -41,45 +46,37 @@ function Login() {
             error={username.touched && Boolean(username.error)}
             onChange={formik.handleChange}
             slotProps={{
-              inputLabel: {
-                className: 'text-slate-300'
-              },
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PersonIcon className="text-slate-300" />
+                    <PersonIcon color="primary" />
                   </InputAdornment>
-                ),
-                className:
-                  '[&_.MuiOutlinedInput-notchedOutline]:border-slate-300 text-slate-300' // hover:[&_.MuiOutlinedInput-notchedOutline]:border-slate-700 [&.Mui-focused_.MuiOutlinedInput-notchedOutline]:border-slate-700
+                )
               }
             }}
           />
           {username.touched && Boolean(username.error) && (
-            <Typography className="text-red-500 text-sm pl-1">
+            <Typography color="error" className="text-xs pl-1 mt-1">
               {username.error}
             </Typography>
           )}
         </Box>
 
-        <Box className="flex flex-col mb-3">
+        <Box className="flex flex-col mb-6">
           <TextField
             label="Contraseña"
             type={showPassword ? 'text' : 'password'}
-            className="w-full text-slate-300"
+            className="w-full"
             name="password"
             onBlur={formik.handleBlur}
             value={password.value}
             error={password.touched && Boolean(password.error)}
             onChange={formik.handleChange}
             slotProps={{
-              inputLabel: {
-                className: 'text-slate-300'
-              },
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <LockIcon className="text-slate-300" />
+                    <LockIcon color="primary" />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -90,26 +87,25 @@ function Login() {
                         setShowPassword(!showPassword)
                       }}
                       edge="end"
-                      className="text-slate-300"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
-                ),
-                className:
-                  '[&_.MuiOutlinedInput-notchedOutline]:border-slate-300 text-slate-300' // hover:[&_.MuiOutlinedInput-notchedOutline]:border-slate-700 [&.Mui-focused_.MuiOutlinedInput-notchedOutline]:border-slate-700
+                )
               }
             }}
           />
           {password.touched && Boolean(password.error) && (
-            <Typography className="text-red-500 text-sm">
+            <Typography color="error" className="text-xs pl-1 mt-1">
               {formik.errors.password}
             </Typography>
           )}
         </Box>
         <Button
           variant="contained"
-          className="w-full bg-slate-300 hover:bg-slate-100 text-slate-800 p-2 rounded"
+          fullWidth
+          size="large"
+          className="rounded-lg py-3 font-bold"
           disabled={!formik.isValid || formik.isSubmitting}
           onClick={() => {
             formik.handleSubmit()

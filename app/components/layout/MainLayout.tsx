@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/ThemeToggle.tsx'
 import {
   AppBar,
   Box,
@@ -11,7 +12,8 @@ import {
   Toolbar,
   Typography,
   Avatar,
-  Stack
+  Stack,
+  useTheme
 } from '@mui/material'
 import {
   Dashboard as DashboardIcon,
@@ -48,6 +50,7 @@ export default function MainLayout() {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)
+  const theme = useTheme()
 
   const handleLogout = () => {
     dispatch(logout())
@@ -55,13 +58,19 @@ export default function MainLayout() {
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f0f2f5' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        minHeight: '100vh',
+        bgcolor: 'background.default'
+      }}
+    >
       {/* Header */}
       <AppBar
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          bgcolor: 'white',
+          bgcolor: 'background.paper',
           color: 'text.primary',
           boxShadow: 'none',
           borderBottom: '1px solid',
@@ -75,13 +84,14 @@ export default function MainLayout() {
               variant="h6"
               noWrap
               component="div"
-              sx={{ fontWeight: 'bold', color: '#1a237e' }}
+              sx={{ fontWeight: 'bold' }}
             >
               Sistema básico de contabilidad
             </Typography>
           </Stack>
 
           <Stack direction="row" spacing={2} alignItems="center">
+            <ThemeToggle />
             <Stack direction="row" spacing={1} alignItems="center">
               <Avatar
                 sx={{
@@ -116,8 +126,8 @@ export default function MainLayout() {
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
             boxSizing: 'border-box',
-            bgcolor: '#1e293b',
-            color: 'white',
+            bgcolor: 'surfaceVariant.main',
+            color: 'surfaceVariant.contrastText',
             borderRight: 'none'
           }
         }}
@@ -135,11 +145,16 @@ export default function MainLayout() {
                     }}
                     sx={{
                       borderRadius: 2,
-                      bgcolor: isActive ? '#2563eb' : 'transparent',
+                      bgcolor: isActive ? 'primary.main' : 'transparent',
+                      color: isActive
+                        ? 'primary.contrastText'
+                        : 'surfaceVariant.contrastText',
                       '&:hover': {
                         bgcolor: isActive
-                          ? '#2563eb'
-                          : 'rgba(255, 255, 255, 0.08)'
+                        ? 'primary.main'
+                        : theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.04)'
                       }
                     }}
                   >
@@ -172,13 +187,15 @@ export default function MainLayout() {
         <Box
           sx={{
             flexGrow: 1,
-            bgcolor: '#e5e7eb',
+            bgcolor: 'background.paper',
             borderRadius: 2,
             p: 4,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: 'calc(100vh - 128px)'
+            minHeight: 'calc(100vh - 128px)',
+            border: '1px solid',
+            borderColor: 'divider'
           }}
         >
           <Outlet />

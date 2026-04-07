@@ -41,7 +41,12 @@ function Row({ entry, onEdit, onDelete }: RowProps) {
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell width="50px">
-          <IconButton size="small" onClick={() => setOpen(!open)}>
+          <IconButton
+            size="small"
+            onClick={() => {
+              setOpen(!open)
+            }}
+          >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
@@ -63,14 +68,18 @@ function Row({ entry, onEdit, onDelete }: RowProps) {
         <TableCell align="right">
           <IconButton
             size="small"
-            onClick={() => onEdit(entry)}
+            onClick={() => {
+              onEdit(entry)
+            }}
             color="primary"
           >
             <EditIcon />
           </IconButton>
           <IconButton
             size="small"
-            onClick={() => onDelete(entry.id)}
+            onClick={() => {
+              onDelete(entry.id)
+            }}
             color="error"
           >
             <DeleteIcon />
@@ -222,7 +231,9 @@ export default function JournalEntries() {
 
       <Dialog
         open={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onClose={() => {
+          setIsFormOpen(false)
+        }}
         maxWidth="md"
         fullWidth
       >
@@ -230,7 +241,9 @@ export default function JournalEntries() {
           <JournalEntryForm
             initialData={selectedEntry}
             onSuccess={handleFormSuccess}
-            onCancel={() => setIsFormOpen(false)}
+            onCancel={() => {
+              setIsFormOpen(false)
+            }}
           />
         </DialogContent>
       </Dialog>

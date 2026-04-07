@@ -8,7 +8,10 @@ import {
 } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '../store'
 import { logout, updateToken } from '../slices/authSlice'
-import type { SuccessResponse } from '@shared/types/common/global.ts'
+import type {
+  SuccessResponse,
+  PagedResult
+} from '@shared/types/common/global.ts'
 import type { LoginReq, LoginRes } from '@shared/types/login/loginValues.ts'
 import type {
   Account,
@@ -30,6 +33,11 @@ import type {
   ClosePeriodReq
 } from '@shared/types/accountingPeriods/accountingPeriodTypes.ts'
 import type { BulkImportHistory } from '@shared/types/bulkImports/bulkImportTypes.ts'
+import type { DashboardSummary } from '@shared/types/dashboard/dashboardTypes.ts'
+import type {
+  TransactionLog,
+  TransactionLogFilter
+} from '@shared/types/logs/logTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -107,7 +115,9 @@ export const apiSlice = createApi({
     'JournalEntries',
     'Reports',
     'AccountingPeriods',
-    'BulkImports'
+    'BulkImports',
+    'Dashboard',
+    'Logs'
   ],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
@@ -250,6 +260,22 @@ export const apiSlice = createApi({
         body: formData
       }),
       invalidatesTags: ['BulkImports', 'JournalEntries']
+    }),
+    getDashboardSummary: builder.query<SuccessResponse<DashboardSummary>, void>(
+      {
+        query: () => '/dashboard/summary',
+        providesTags: ['Dashboard']
+      }
+    ),
+    getLogs: builder.query<
+      SuccessResponse<PagedResult<TransactionLog>>,
+      TransactionLogFilter
+    >({
+      query: (filter) => ({
+        url: '/transactionLogs',
+        params: filter
+      }),
+      providesTags: ['Logs']
     })
   })
 })
@@ -274,5 +300,7 @@ export const {
   useCreateAccountingPeriodMutation,
   useCloseAccountingPeriodMutation,
   useGetBulkImportHistoryQuery,
-  useUploadBulkImportMutation
+  useUploadBulkImportMutation,
+  useGetDashboardSummaryQuery,
+  useGetLogsQuery
 } = apiSlice

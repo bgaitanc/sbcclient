@@ -59,10 +59,10 @@ export const useAccountingPeriodActions = (onSuccess?: () => void) => {
 
   // Obtener cuentas de patrimonio (tipo 3) para el cierre
   const equityAccounts = useMemo(() => {
-    if (accountsData == null || !accountsData.success) return []
+    if (!accountsData?.success) return []
 
-    const flatten = (accounts: Account[]): Account[] => {
-      return accounts.reduce<Account[]>((acc, account) => {
+    const flatten = (accounts: Account[]): Account[] =>
+      accounts.reduce<Account[]>((acc, account) => {
         if (account.type === 3) {
           acc.push(account)
         }
@@ -71,7 +71,6 @@ export const useAccountingPeriodActions = (onSuccess?: () => void) => {
         }
         return acc
       }, [])
-    }
 
     return flatten(accountsData.data)
   }, [accountsData])

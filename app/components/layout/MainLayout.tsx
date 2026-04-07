@@ -181,7 +181,7 @@ export default function MainLayout() {
       {/* Main Content */}
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}
+        sx={{ flexGrow: 1, p: 2, display: 'flex', flexDirection: 'column' }}
       >
         <Toolbar />
         <Box
@@ -189,13 +189,13 @@ export default function MainLayout() {
             flexGrow: 1,
             bgcolor: 'background.paper',
             borderRadius: 2,
-            p: 4,
+            p: 2,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: 'calc(100vh - 128px)',
+            flexDirection: 'column',
+            minHeight: 'calc(100vh - 112px)',
             border: '1px solid',
-            borderColor: 'divider'
+            borderColor: 'divider',
+            overflowX: 'auto'
           }}
         >
           <Outlet />

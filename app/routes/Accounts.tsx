@@ -82,7 +82,7 @@ export default function Accounts() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1, width: '100%' }}>
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -101,7 +101,7 @@ export default function Accounts() {
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 5 }}>
-          <Paper sx={{ p: 2, height: '70vh', overflow: 'auto' }}>
+          <Paper sx={{ p: 2, height: 'calc(100vh - 250px)', overflow: 'auto' }}>
             {isLoading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />

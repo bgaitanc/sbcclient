@@ -189,7 +189,7 @@ export default function JournalEntries() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1, width: '100%' }}>
       <Stack
         direction="row"
         justifyContent="space-between"

@@ -61,7 +61,7 @@ const AccountingPeriods = () => {
   const periods = data?.data ?? []
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1, width: '100%' }}>
       <Box
         sx={{
           display: 'flex',

@@ -79,7 +79,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1, width: '100%' }}>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
         Dashboard Financiero
       </Typography>

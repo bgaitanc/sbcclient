@@ -45,7 +45,7 @@ const Reports = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1, width: '100%' }}>
       <Typography variant="h4" gutterBottom>
         Informes Financieros
       </Typography>

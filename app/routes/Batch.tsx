@@ -85,7 +85,7 @@ export default function Batch() {
   }
 
   return (
-    <Box className="p-6">
+    <Box className="p-1 w-full">
       <Typography variant="h4" className="mb-6 font-bold text-primary">
         Carga Masiva de Asientos
       </Typography>

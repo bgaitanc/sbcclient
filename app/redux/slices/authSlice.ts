@@ -15,8 +15,20 @@ interface AuthState {
   isAuthenticated: boolean
 }
 
+const getInitialUser = (): User | null => {
+  if (typeof window === 'undefined') return null
+  const user = localStorage.getItem('user')
+  if (user === null) return null
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Rehidratación del estado del usuario desde localStorage
+    return JSON.parse(user) as User
+  } catch {
+    return null
+  }
+}
+
 const initialState: AuthState = {
-  user: null,
+  user: getInitialUser(),
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   refreshToken:
     typeof window !== 'undefined'
@@ -57,6 +69,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null
       state.token = null
+      state.refreshToken = null
       state.isAuthenticated = false
       localStorage.removeItem('token')
       localStorage.removeItem('refresh-token')

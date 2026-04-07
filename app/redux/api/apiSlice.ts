@@ -29,6 +29,7 @@ import type {
   CreateAccountingPeriodReq,
   ClosePeriodReq
 } from '@shared/types/accountingPeriods/accountingPeriodTypes.ts'
+import type { BulkImportHistory } from '@shared/types/bulkImports/bulkImportTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -101,7 +102,13 @@ const baseQueryWithReauth: BaseQueryFn<
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Accounts', 'JournalEntries', 'Reports', 'AccountingPeriods'],
+  tagTypes: [
+    'Accounts',
+    'JournalEntries',
+    'Reports',
+    'AccountingPeriods',
+    'BulkImports'
+  ],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     login: builder.mutation<SuccessResponse<LoginRes>, LoginReq>({
@@ -228,6 +235,21 @@ export const apiSlice = createApi({
         body: closeData
       }),
       invalidatesTags: ['AccountingPeriods', 'JournalEntries']
+    }),
+    getBulkImportHistory: builder.query<
+      SuccessResponse<BulkImportHistory[]>,
+      void
+    >({
+      query: () => '/bulkImports',
+      providesTags: ['BulkImports']
+    }),
+    uploadBulkImport: builder.mutation<SuccessResponse<void>, FormData>({
+      query: (formData) => ({
+        url: '/bulkImports',
+        method: 'POST',
+        body: formData
+      }),
+      invalidatesTags: ['BulkImports', 'JournalEntries']
     })
   })
 })
@@ -250,5 +272,7 @@ export const {
   useGetAccountingPeriodsQuery,
   useGetAccountingPeriodQuery,
   useCreateAccountingPeriodMutation,
-  useCloseAccountingPeriodMutation
+  useCloseAccountingPeriodMutation,
+  useGetBulkImportHistoryQuery,
+  useUploadBulkImportMutation
 } = apiSlice

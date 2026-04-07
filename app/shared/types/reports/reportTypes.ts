@@ -7,6 +7,7 @@ export interface BalanceSheetLine {
 
 export interface BalanceSheet {
   date: string
+  isProvisional: boolean
   assets: BalanceSheetLine[]
   totalAssets: number
   liabilities: BalanceSheetLine[]
@@ -27,6 +28,7 @@ export interface IncomeStatementLine {
 export interface IncomeStatement {
   startDate: string
   endDate: string
+  isProvisional: boolean
   revenues: IncomeStatementLine[]
   totalRevenues: number
   costs: IncomeStatementLine[]
@@ -41,4 +43,5 @@ export interface ReportParams {
   startDate?: string
   endDate?: string
   date?: string
+  includeUnposted?: boolean
 }

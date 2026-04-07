@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import {
   Box,
   Typography,
@@ -16,7 +16,8 @@ import {
   Dialog,
   DialogContent,
   Stack,
-  Collapse
+  Collapse,
+  TablePagination
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -38,7 +39,7 @@ function Row({ entry, onEdit, onDelete }: RowProps) {
   const [open, setOpen] = useState(false)
 
   return (
-    <>
+    <Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell width="50px">
           <IconButton
@@ -88,7 +89,7 @@ function Row({ entry, onEdit, onDelete }: RowProps) {
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
+          <Collapse in={open} timeout="auto">
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
                 Detalles del Asiento
@@ -129,18 +130,27 @@ function Row({ entry, onEdit, onDelete }: RowProps) {
           </Collapse>
         </TableCell>
       </TableRow>
-    </>
+    </Fragment>
   )
 }
 
 export default function JournalEntries() {
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
   const {
     data: response,
     isLoading,
     refetch
-  } = useGetJournalEntriesQuery(undefined, {
-    refetchOnMountOrArgChange: true
-  })
+  } = useGetJournalEntriesQuery(
+    {
+      pageNumber: page + 1,
+      pageSize
+    },
+    {
+      refetchOnMountOrArgChange: true
+    }
+  )
   const { handleDelete } = useJournalEntryActions()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null)
@@ -156,14 +166,20 @@ export default function JournalEntries() {
   }
 
   const onDelete = async (id: string) => {
+    // eslint-disable-next-line no-alert -- Confirmación nativa
     if (window.confirm('¿Está seguro de eliminar este asiento?')) {
       try {
         await handleDelete(id)
         void refetch()
       } catch (error) {
-        alert('Error al eliminar el asiento')
+        // eslint-disable-next-line no-console -- Error en eliminación
+        console.error('Error al eliminar el asiento:', error)
       }
     }
+  }
+
+  const handleDeleteClick = (id: string) => {
+    void onDelete(id)
   }
 
   const handleFormSuccess = () => {
@@ -209,16 +225,16 @@ export default function JournalEntries() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {response?.data?.map((entry) => (
+              {(response?.data.items ?? []).map((entry) => (
                 <Row
                   key={entry.id}
                   entry={entry}
                   onEdit={handleEdit}
-                  onDelete={onDelete}
+                  onDelete={handleDeleteClick}
                 />
               ))}
-              {(!response?.data || response.data.length === 0) && (
-                <TableRow>
+              {(response?.data.items.length ?? 0) === 0 && (
+                <TableRow key="no-entries">
                   <TableCell colSpan={7} align="center">
                     No hay asientos contables registrados.
                   </TableCell>
@@ -226,6 +242,20 @@ export default function JournalEntries() {
               )}
             </TableBody>
           </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={response?.data.totalCount ?? 0}
+            rowsPerPage={pageSize}
+            page={page}
+            onPageChange={(_e, newPage) => {
+              setPage(newPage)
+            }}
+            onRowsPerPageChange={(e) => {
+              setPageSize(parseInt(e.target.value, 10))
+              setPage(0)
+            }}
+          />
         </TableContainer>
       )}
 

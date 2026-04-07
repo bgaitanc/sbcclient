@@ -47,3 +47,12 @@ export interface UpdateJournalEntryReq {
   description: string
   lines: UpdateJournalEntryLineReq[]
 }
+
+export interface JournalEntryFilter {
+  pageNumber?: number
+  pageSize?: number
+  searchTerm?: string
+  fromDate?: string
+  toDate?: string
+  isPosted?: boolean
+}

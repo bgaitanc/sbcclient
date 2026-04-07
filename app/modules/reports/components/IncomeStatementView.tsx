@@ -12,14 +12,16 @@ import { FinancialTable } from './FinancialTable'
 interface IncomeStatementViewProps {
   startDate: string
   endDate: string
+  includeUnposted?: boolean
 }
 
 export const IncomeStatementView = ({
   startDate,
-  endDate
+  endDate,
+  includeUnposted = false
 }: IncomeStatementViewProps) => {
   const { data, isLoading, isError, error } = useGetIncomeStatementQuery(
-    { startDate, endDate },
+    { startDate, endDate, includeUnposted },
     { skip: startDate === '' || endDate === '' }
   )
 

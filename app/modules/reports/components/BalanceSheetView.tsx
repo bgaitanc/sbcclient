@@ -11,12 +11,19 @@ import { FinancialTable } from './FinancialTable'
 
 interface BalanceSheetViewProps {
   date: string
+  includeUnposted?: boolean
 }
 
-export const BalanceSheetView = ({ date }: BalanceSheetViewProps) => {
-  const { data, isLoading, isError, error } = useGetBalanceSheetQuery(date, {
-    skip: date === ''
-  })
+export const BalanceSheetView = ({
+  date,
+  includeUnposted = false
+}: BalanceSheetViewProps) => {
+  const { data, isLoading, isError, error } = useGetBalanceSheetQuery(
+    { date, includeUnposted },
+    {
+      skip: date === ''
+    }
+  )
 
   if (isLoading) {
     return (

@@ -1,14 +1,23 @@
-import type { SuccessResponse } from '../common/global'
+import type { SuccessResponse, PagedResult } from '../common/global'
 
 export interface BulkImportHistory {
   id: string
   fileName: string
-  status: string
-  processedAt: string
-  errorMessage?: string
-  totalRecords: number
-  successRecords: number
-  errorRecords: number
+  successCount: number
+  errorCount: number
+  totalCount: number
+  createdAt: string
+  createdBy?: string
 }
 
-export type BulkImportHistoryRes = SuccessResponse<BulkImportHistory[]>
+export interface BulkImportFilter {
+  fileName?: string
+  fromDate?: string
+  toDate?: string
+  pageNumber?: number
+  pageSize?: number
+}
+
+export type BulkImportHistoryRes = SuccessResponse<
+  PagedResult<BulkImportHistory>
+>

@@ -7,28 +7,35 @@ import {
   Tab,
   TextField,
   Stack,
-  Button
+  Button,
+  FormControlLabel,
+  Checkbox,
+  Chip
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import { BalanceSheetView } from '../modules/reports/components/BalanceSheetView'
 import { IncomeStatementView } from '../modules/reports/components/IncomeStatementView'
 
 const Reports = () => {
   const [tabIndex, setTabIndex] = useState(0)
-  const today = new Date().toISOString().split('T')[0]
-  const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1)
+  const [today] = new Date().toISOString().split('T')
+  const [firstDayOfYear] = new Date(new Date().getFullYear(), 0, 1)
     .toISOString()
-    .split('T')[0]
+    .split('T')
 
   const [date, setDate] = useState(today)
   const [startDate, setStartDate] = useState(firstDayOfYear)
   const [endDate, setEndDate] = useState(today)
+  const [includeUnposted, setIncludeUnposted] = useState(false)
 
   const [appliedDate, setAppliedDate] = useState(today)
   const [appliedStartDate, setAppliedStartDate] = useState(firstDayOfYear)
   const [appliedEndDate, setAppliedEndDate] = useState(today)
+  const [appliedIncludeUnposted, setAppliedIncludeUnposted] = useState(false)
 
   const handleApplyFilters = () => {
+    setAppliedIncludeUnposted(includeUnposted)
     if (tabIndex === 0) {
       setAppliedDate(date)
     } else {
@@ -46,7 +53,7 @@ const Reports = () => {
       <Paper sx={{ mb: 3 }}>
         <Tabs
           value={tabIndex}
-          onChange={(_, newValue) => {
+          onChange={(_, newValue: number) => {
             setTabIndex(newValue)
           }}
           indicatorColor="primary"
@@ -98,6 +105,17 @@ const Reports = () => {
                 />
               </>
             )}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={includeUnposted}
+                  onChange={(e) => {
+                    setIncludeUnposted(e.target.checked)
+                  }}
+                />
+              }
+              label="Incluir no publicados (Provisional)"
+            />
             <Button
               variant="contained"
               startIcon={<SearchIcon />}
@@ -110,12 +128,27 @@ const Reports = () => {
       </Paper>
 
       <Paper sx={{ minHeight: 400 }}>
+        {appliedIncludeUnposted && (
+          <Box sx={{ p: 2, pb: 0 }}>
+            <Chip
+              icon={<WarningAmberIcon />}
+              label="Informe Provisional: Incluye transacciones no publicadas"
+              color="warning"
+              variant="outlined"
+              sx={{ width: '100%', justifyContent: 'flex-start' }}
+            />
+          </Box>
+        )}
         {tabIndex === 0 ? (
-          <BalanceSheetView date={appliedDate} />
+          <BalanceSheetView
+            date={appliedDate}
+            includeUnposted={appliedIncludeUnposted}
+          />
         ) : (
           <IncomeStatementView
             startDate={appliedStartDate}
             endDate={appliedEndDate}
+            includeUnposted={appliedIncludeUnposted}
           />
         )}
       </Paper>

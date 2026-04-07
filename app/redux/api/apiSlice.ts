@@ -21,7 +21,8 @@ import type {
 import type {
   JournalEntry,
   CreateJournalEntryReq,
-  UpdateJournalEntryReq
+  UpdateJournalEntryReq,
+  JournalEntryFilter
 } from '@shared/types/journalEntries/journalEntryTypes.ts'
 import type {
   BalanceSheet,
@@ -32,7 +33,10 @@ import type {
   CreateAccountingPeriodReq,
   ClosePeriodReq
 } from '@shared/types/accountingPeriods/accountingPeriodTypes.ts'
-import type { BulkImportHistory } from '@shared/types/bulkImports/bulkImportTypes.ts'
+import type {
+  BulkImportHistory,
+  BulkImportFilter
+} from '@shared/types/bulkImports/bulkImportTypes.ts'
 import type { DashboardSummary } from '@shared/types/dashboard/dashboardTypes.ts'
 import type {
   TransactionLog,
@@ -159,8 +163,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Accounts']
     }),
-    getJournalEntries: builder.query<SuccessResponse<JournalEntry[]>, void>({
-      query: () => '/journalEntries',
+    getJournalEntries: builder.query<
+      SuccessResponse<PagedResult<JournalEntry>>,
+      JournalEntryFilter | undefined
+    >({
+      query: (filter) => ({
+        url: '/journalEntries',
+        params: filter
+      }),
       providesTags: ['JournalEntries']
     }),
     getJournalEntry: builder.query<SuccessResponse<JournalEntry>, string>({
@@ -196,16 +206,20 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['JournalEntries']
     }),
-    getBalanceSheet: builder.query<SuccessResponse<BalanceSheet>, string>({
-      query: (date) => `/reports/balance-sheet?date=${date}`,
+    getBalanceSheet: builder.query<
+      SuccessResponse<BalanceSheet>,
+      { date: string; includeUnposted?: boolean }
+    >({
+      query: ({ date, includeUnposted = false }) =>
+        `/reports/balance-sheet?date=${date}&includeUnposted=${includeUnposted}`,
       providesTags: ['Reports']
     }),
     getIncomeStatement: builder.query<
       SuccessResponse<IncomeStatement>,
-      { startDate: string; endDate: string }
+      { startDate: string; endDate: string; includeUnposted?: boolean }
     >({
-      query: ({ startDate, endDate }) =>
-        `/reports/income-statement?startDate=${startDate}&endDate=${endDate}`,
+      query: ({ startDate, endDate, includeUnposted = false }) =>
+        `/reports/income-statement?startDate=${startDate}&endDate=${endDate}&includeUnposted=${includeUnposted}`,
       providesTags: ['Reports']
     }),
     getAccountingPeriods: builder.query<
@@ -247,10 +261,13 @@ export const apiSlice = createApi({
       invalidatesTags: ['AccountingPeriods', 'JournalEntries']
     }),
     getBulkImportHistory: builder.query<
-      SuccessResponse<BulkImportHistory[]>,
-      void
+      SuccessResponse<PagedResult<BulkImportHistory>>,
+      BulkImportFilter | undefined
     >({
-      query: () => '/bulkImports',
+      query: (filter) => ({
+        url: '/bulkImports',
+        params: filter
+      }),
       providesTags: ['BulkImports']
     }),
     uploadBulkImport: builder.mutation<SuccessResponse<void>, FormData>({

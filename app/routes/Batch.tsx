@@ -12,7 +12,8 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Chip
+  Chip,
+  TablePagination
 } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import HistoryIcon from '@mui/icons-material/History'
@@ -22,55 +23,65 @@ import { useRef, useState } from 'react'
 import { useBulkImportActions } from '@modules/bulkImport/hooks/useBulkImportActions'
 
 export default function Batch() {
-  const { handleUpload, isUploading, history, isLoadingHistory } =
-    useBulkImportActions()
+  const {
+    handleUpload,
+    isUploading,
+    history,
+    isLoadingHistory,
+    totalCount,
+    pageNumber,
+    pageSize,
+    handlePageChange,
+    handlePageSizeChange
+  } = useBulkImportActions()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (file) {
+    if (file !== undefined) {
       setSelectedFile(file)
     }
   }
 
   const onUpload = async () => {
-    if (selectedFile) {
+    if (selectedFile !== null) {
       const result = await handleUpload(selectedFile)
       if (result.success) {
         setSelectedFile(null)
-        if (fileInputRef.current) {
+        if (fileInputRef.current !== null) {
           fileInputRef.current.value = ''
         }
       }
     }
   }
 
-  const getStatusChip = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-      case 'completado':
-        return (
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="Completado"
-            color="success"
-            size="small"
-          />
-        )
-      case 'failed':
-      case 'fallido':
-        return (
-          <Chip
-            icon={<ErrorIcon />}
-            label="Fallido"
-            color="error"
-            size="small"
-          />
-        )
-      default:
-        return <Chip label={status} size="small" />
+  const getStatusChip = (errorCount: number, successCount: number) => {
+    if (errorCount === 0) {
+      return (
+        <Chip
+          icon={<CheckCircleIcon />}
+          label="Completado"
+          color="success"
+          size="small"
+        />
+      )
     }
+
+    if (successCount > 0) {
+      return (
+        <Chip
+          icon={<ErrorIcon />}
+          label="Parcial"
+          color="warning"
+          size="small"
+        />
+      )
+    }
+
+    return (
+      <Chip icon={<ErrorIcon />} label="Fallido" color="error" size="small" />
+    )
   }
 
   return (
@@ -100,7 +111,7 @@ export default function Batch() {
                 ref={fileInputRef}
               />
             </Button>
-            {selectedFile && (
+            {selectedFile !== null && (
               <Typography variant="body2" className="text-on-surface-variant">
                 Archivo: <strong>{selectedFile.name}</strong> (
                 {(selectedFile.size / 1024).toFixed(2)} KB)
@@ -108,8 +119,10 @@ export default function Batch() {
             )}
             <Button
               variant="contained"
-              onClick={onUpload}
-              disabled={!selectedFile || isUploading}
+              onClick={() => {
+                void onUpload()
+              }}
+              disabled={selectedFile === null || isUploading}
               className="w-full md:w-auto"
             >
               {isUploading ? <CircularProgress size={24} /> : 'Procesar Carga'}
@@ -158,23 +171,38 @@ export default function Batch() {
               history.map((item) => (
                 <TableRow key={item.id} hover>
                   <TableCell>
-                    {new Date(item.processedAt).toLocaleString()}
+                    {new Date(item.createdAt).toLocaleString()}
                   </TableCell>
                   <TableCell>{item.fileName}</TableCell>
-                  <TableCell>{item.totalRecords}</TableCell>
-                  <TableCell className="text-success-main">
-                    {item.successRecords}
+                  <TableCell>{item.totalCount}</TableCell>
+                  <TableCell sx={{ color: 'success.main' }}>
+                    {item.successCount}
                   </TableCell>
-                  <TableCell className="text-error-main">
-                    {item.errorRecords}
+                  <TableCell sx={{ color: 'error.main' }}>
+                    {item.errorCount}
                   </TableCell>
-                  <TableCell>{getStatusChip(item.status)}</TableCell>
+                  <TableCell>
+                    {getStatusChip(item.errorCount, item.successCount)}
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={totalCount}
+        page={pageNumber - 1}
+        onPageChange={(_e, page) => {
+          handlePageChange(page + 1)
+        }}
+        rowsPerPage={pageSize}
+        onRowsPerPageChange={(e) => {
+          handlePageSizeChange(parseInt(e.target.value, 10))
+        }}
+        labelRowsPerPage="Filas por página"
+      />
     </Box>
   )
 }

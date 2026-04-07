@@ -1,16 +1,23 @@
+import { useState } from 'react'
 import {
   useUploadBulkImportMutation,
   useGetBulkImportHistoryQuery
 } from '@/redux/api/apiSlice'
+import type { BulkImportFilter } from '@/shared/types/bulkImports/bulkImportTypes'
 
 export const useBulkImportActions = () => {
+  const [filter, setFilter] = useState<BulkImportFilter>({
+    pageNumber: 1,
+    pageSize: 10
+  })
+
   const [uploadBulkImport, { isLoading: isUploading }] =
     useUploadBulkImportMutation()
   const {
     data: historyResponse,
     isLoading: isLoadingHistory,
     refetch: refetchHistory
-  } = useGetBulkImportHistoryQuery()
+  } = useGetBulkImportHistoryQuery(filter)
 
   const handleUpload = async (file: File) => {
     const formData = new FormData()
@@ -24,11 +31,26 @@ export const useBulkImportActions = () => {
     }
   }
 
+  const handlePageChange = (newPage: number) => {
+    setFilter((prev) => ({ ...prev, pageNumber: newPage }))
+  }
+
+  const handlePageSizeChange = (newSize: number) => {
+    setFilter((prev) => ({ ...prev, pageSize: newSize, pageNumber: 1 }))
+  }
+
   return {
     handleUpload,
     isUploading,
-    history: historyResponse?.data ?? [],
+    history: historyResponse?.data.items ?? [],
+    totalCount: historyResponse?.data.totalCount ?? 0,
+    pageNumber: filter.pageNumber ?? 1,
+    pageSize: filter.pageSize ?? 10,
     isLoadingHistory,
-    refetchHistory
+    refetchHistory,
+    handlePageChange,
+    handlePageSizeChange,
+    filter,
+    setFilter
   }
 }

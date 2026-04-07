@@ -29,7 +29,7 @@ export default function Logs() {
   const [action, setAction] = useState('')
 
   const { data: response, isLoading } = useGetLogsQuery({
-    page: page + 1,
+    pageNumber: page + 1,
     pageSize,
     status: status !== '' ? status : undefined,
     action: action !== '' ? action : undefined
@@ -54,9 +54,8 @@ export default function Logs() {
         return <Chip label="Error" color="error" size="small" />
       case TransactionStatus.Warning:
         return <Chip label="Advertencia" color="warning" size="small" />
-      default:
-        return <Chip label={status} size="small" />
     }
+    return <Chip label={status} size="small" />
   }
 
   return (
@@ -112,7 +111,7 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {response?.data?.items.map((log) => (
+              {response?.data.items.map((log) => (
                 <TableRow key={log.id} hover>
                   <TableCell>
                     {new Date(log.logDate).toLocaleString()}
@@ -120,9 +119,7 @@ export default function Logs() {
                   <TableCell>{log.action}</TableCell>
                   <TableCell>
                     {log.entityName}{' '}
-                    {log.entityId !== undefined &&
-                      log.entityId !== null &&
-                      `(${log.entityId})`}
+                    {log.entityId !== undefined && `(${log.entityId})`}
                   </TableCell>
                   <TableCell>{getStatusChip(log.status)}</TableCell>
                   <TableCell
@@ -138,9 +135,7 @@ export default function Logs() {
                   <TableCell>{log.ipAddress}</TableCell>
                 </TableRow>
               ))}
-              {(response?.data?.items === undefined ||
-                response.data.items === null ||
-                response.data.items.length === 0) && (
+              {(response?.data.items.length ?? 0) === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                     No se encontraron logs.
@@ -152,7 +147,7 @@ export default function Logs() {
           <TablePagination
             rowsPerPageOptions={[10, 25, 50]}
             component="div"
-            count={response?.data?.totalCount ?? 0}
+            count={response?.data.totalCount ?? 0}
             rowsPerPage={pageSize}
             page={page}
             onPageChange={handleChangePage}

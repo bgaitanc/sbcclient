@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import {
   useUploadBulkImportMutation,
-  useGetBulkImportHistoryQuery
+  useGetBulkImportHistoryQuery,
+  useLazyGetBulkImportTemplateQuery
 } from '@/redux/api/apiSlice'
 import type { BulkImportFilter } from '@/shared/types/bulkImports/bulkImportTypes'
 
@@ -13,11 +14,31 @@ export const useBulkImportActions = () => {
 
   const [uploadBulkImport, { isLoading: isUploading }] =
     useUploadBulkImportMutation()
+  const [triggerDownload, { isFetching: isDownloadingTemplate }] =
+    useLazyGetBulkImportTemplateQuery()
+
   const {
     data: historyResponse,
     isLoading: isLoadingHistory,
     refetch: refetchHistory
   } = useGetBulkImportHistoryQuery(filter)
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const blob = await triggerDownload().unwrap()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'PlantillaAsientos.xlsx')
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      return { success: true }
+    } catch (error) {
+      return { success: false, error }
+    }
+  }
 
   const handleUpload = async (file: File) => {
     const formData = new FormData()
@@ -41,7 +62,9 @@ export const useBulkImportActions = () => {
 
   return {
     handleUpload,
+    handleDownloadTemplate,
     isUploading,
+    isDownloadingTemplate,
     history: historyResponse?.data.items ?? [],
     totalCount: historyResponse?.data.totalCount ?? 0,
     pageNumber: filter.pageNumber ?? 1,

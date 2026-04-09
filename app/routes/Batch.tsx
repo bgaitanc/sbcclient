@@ -16,6 +16,7 @@ import {
   TablePagination
 } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import DownloadIcon from '@mui/icons-material/Download'
 import HistoryIcon from '@mui/icons-material/History'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ErrorIcon from '@mui/icons-material/Error'
@@ -25,7 +26,9 @@ import { useBulkImportActions } from '@modules/bulkImport/hooks/useBulkImportAct
 export default function Batch() {
   const {
     handleUpload,
+    handleDownloadTemplate,
     isUploading,
+    isDownloadingTemplate,
     history,
     isLoadingHistory,
     totalCount,
@@ -126,6 +129,21 @@ export default function Batch() {
               className="w-full md:w-auto"
             >
               {isUploading ? <CircularProgress size={24} /> : 'Procesar Carga'}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              onClick={() => {
+                void handleDownloadTemplate()
+              }}
+              disabled={isDownloadingTemplate}
+              className="w-full md:w-auto"
+            >
+              {isDownloadingTemplate ? (
+                <CircularProgress size={24} />
+              ) : (
+                'Descargar Plantilla'
+              )}
             </Button>
           </Box>
           <Typography variant="caption" className="mt-4 block text-outline">

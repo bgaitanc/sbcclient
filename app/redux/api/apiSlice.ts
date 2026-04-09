@@ -276,7 +276,13 @@ export const apiSlice = createApi({
         method: 'POST',
         body: formData
       }),
-      invalidatesTags: ['BulkImports', 'JournalEntries']
+      invalidatesTags: ['BulkImports', 'JournalEntries', 'Dashboard']
+    }),
+    getBulkImportTemplate: builder.query<Blob, void>({
+      query: () => ({
+        url: '/bulkImports/template',
+        responseHandler: async (response) => await response.blob()
+      })
     }),
     getDashboardSummary: builder.query<SuccessResponse<DashboardSummary>, void>(
       {
@@ -318,6 +324,8 @@ export const {
   useCloseAccountingPeriodMutation,
   useGetBulkImportHistoryQuery,
   useUploadBulkImportMutation,
+  useGetBulkImportTemplateQuery,
+  useLazyGetBulkImportTemplateQuery,
   useGetDashboardSummaryQuery,
   useGetLogsQuery
 } = apiSlice

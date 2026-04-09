@@ -197,14 +197,14 @@ export const apiSlice = createApi({
         method: 'PUT',
         body: updatedEntry
       }),
-      invalidatesTags: ['JournalEntries', { type: 'JournalEntries' }]
+      invalidatesTags: ['JournalEntries', { type: 'JournalEntries' }, 'Dashboard']
     }),
     deleteJournalEntry: builder.mutation<SuccessResponse<void>, string>({
       query: (id) => ({
         url: `/journalEntries/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['JournalEntries']
+      invalidatesTags: ['JournalEntries', 'Dashboard']
     }),
     getBalanceSheet: builder.query<
       SuccessResponse<BalanceSheet>,

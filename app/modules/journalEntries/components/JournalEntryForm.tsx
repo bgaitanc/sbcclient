@@ -21,7 +21,7 @@ import AddIcon from '@mui/icons-material/Add'
 import SaveIcon from '@mui/icons-material/Save'
 import type {
   JournalEntry,
-  CreateJournalEntryLineReq
+  UpdateJournalEntryLineReq
 } from '@shared/types/journalEntries/journalEntryTypes'
 import { useJournalEntryActions } from '../hooks/useJournalEntryActions'
 import { useGetAccountsTreeQuery } from '@/redux/api/apiSlice'
@@ -77,7 +77,7 @@ export const JournalEntryForm = ({
 
   const handleLineChange = (
     index: number,
-    field: keyof CreateJournalEntryLineReq,
+    field: keyof UpdateJournalEntryLineReq,
     value: string | number
   ) => {
     const newLines = [...formik.values.lines]

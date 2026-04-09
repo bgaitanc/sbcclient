@@ -6,10 +6,17 @@ import {
 import type {
   CreateJournalEntryReq,
   UpdateJournalEntryReq,
-  JournalEntry
+  JournalEntry,
+  UpdateJournalEntryLineReq
 } from '@shared/types/journalEntries/journalEntryTypes'
 import { useFormik } from 'formik'
 import { journalEntrySchema } from '../utils/journalEntry.schema'
+
+export interface JournalEntryFormValues {
+  date: string
+  description: string
+  lines: UpdateJournalEntryLineReq[]
+}
 
 export const useJournalEntryActions = (
   initialData?: JournalEntry | null,
@@ -22,7 +29,7 @@ export const useJournalEntryActions = (
   const [deleteJournalEntry, { isLoading: isDeleting }] =
     useDeleteJournalEntryMutation()
 
-  const formik = useFormik<CreateJournalEntryReq>({
+  const formik = useFormik<JournalEntryFormValues>({
     initialValues: {
       date:
         initialData?.date != null
@@ -30,6 +37,7 @@ export const useJournalEntryActions = (
           : new Date().toISOString().split('T')[0],
       description: initialData?.description ?? '',
       lines: initialData?.lines.map((l) => ({
+        id: l.id,
         accountId: l.accountId,
         debit: l.debit,
         credit: l.credit
@@ -43,16 +51,23 @@ export const useJournalEntryActions = (
       try {
         if (initialData != null) {
           const updateData: UpdateJournalEntryReq = {
-            ...values,
             id: initialData.id,
-            lines: values.lines.map((l, index) => ({
-              ...l,
-              id: initialData.lines[index]?.id
-            }))
+            date: values.date,
+            description: values.description,
+            lines: values.lines
           }
           await updateJournalEntry(updateData).unwrap()
         } else {
-          await createJournalEntry(values).unwrap()
+          const createData: CreateJournalEntryReq = {
+            date: values.date,
+            description: values.description,
+            lines: values.lines.map((l) => ({
+              accountId: l.accountId,
+              debit: l.debit,
+              credit: l.credit
+            }))
+          }
+          await createJournalEntry(createData).unwrap()
         }
         onSuccess?.()
       } catch (error) {

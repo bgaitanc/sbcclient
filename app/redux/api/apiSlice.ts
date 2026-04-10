@@ -234,6 +234,42 @@ export const apiSlice = createApi({
         `/reports/income-statement?startDate=${startDate}&endDate=${endDate}&includeUnposted=${includeUnposted}`,
       providesTags: ['Reports']
     }),
+    getIncomeStatementExcel: builder.query<
+      Blob,
+      { startDate: string; endDate: string; includeUnposted?: boolean }
+    >({
+      query: ({ startDate, endDate, includeUnposted = false }) => ({
+        url: `/financialReports/income-statement/excel?startDate=${startDate}&endDate=${endDate}&includeUnposted=${includeUnposted}`,
+        responseHandler: async (response) => await response.blob()
+      })
+    }),
+    getIncomeStatementPdf: builder.query<
+      Blob,
+      { startDate: string; endDate: string; includeUnposted?: boolean }
+    >({
+      query: ({ startDate, endDate, includeUnposted = false }) => ({
+        url: `/financialReports/income-statement/pdf?startDate=${startDate}&endDate=${endDate}&includeUnposted=${includeUnposted}`,
+        responseHandler: async (response) => await response.blob()
+      })
+    }),
+    getBalanceSheetExcel: builder.query<
+      Blob,
+      { date: string; includeUnposted?: boolean }
+    >({
+      query: ({ date, includeUnposted = false }) => ({
+        url: `/financialReports/balance-sheet/excel?date=${date}&includeUnposted=${includeUnposted}`,
+        responseHandler: async (response) => await response.blob()
+      })
+    }),
+    getBalanceSheetPdf: builder.query<
+      Blob,
+      { date: string; includeUnposted?: boolean }
+    >({
+      query: ({ date, includeUnposted = false }) => ({
+        url: `/financialReports/balance-sheet/pdf?date=${date}&includeUnposted=${includeUnposted}`,
+        responseHandler: async (response) => await response.blob()
+      })
+    }),
     getAccountingPeriods: builder.query<
       SuccessResponse<AccountingPeriod[]>,
       void
@@ -376,6 +412,14 @@ export const {
   useDeleteJournalEntryMutation,
   useGetBalanceSheetQuery,
   useGetIncomeStatementQuery,
+  useGetIncomeStatementExcelQuery,
+  useLazyGetIncomeStatementExcelQuery,
+  useGetIncomeStatementPdfQuery,
+  useLazyGetIncomeStatementPdfQuery,
+  useGetBalanceSheetExcelQuery,
+  useLazyGetBalanceSheetExcelQuery,
+  useGetBalanceSheetPdfQuery,
+  useLazyGetBalanceSheetPdfQuery,
   useGetAccountingPeriodsQuery,
   useGetAccountingPeriodQuery,
   useCreateAccountingPeriodMutation,

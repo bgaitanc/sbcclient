@@ -9,10 +9,7 @@ import {
   updateUserSchema,
   passwordSchema
 } from '../schemas/user.schema'
-import type {
-  UserDto,
-  UpdatePasswordDto
-} from '@shared/types/users/userTypes'
+import type { UserDto, UpdatePasswordDto } from '@shared/types/users/userTypes'
 
 interface UserFormValues {
   userName: string

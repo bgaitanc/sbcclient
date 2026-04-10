@@ -10,12 +10,18 @@ import {
   Button,
   FormControlLabel,
   Checkbox,
-  Chip
+  Chip,
+  ButtonGroup,
+  Tooltip,
+  CircularProgress
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import { BalanceSheetView } from '../modules/reports/components/BalanceSheetView'
 import { IncomeStatementView } from '../modules/reports/components/IncomeStatementView'
+import { useReportActions } from '../modules/reports/hooks/useReportActions'
 
 const Reports = () => {
   const [tabIndex, setTabIndex] = useState(0)
@@ -33,6 +39,14 @@ const Reports = () => {
   const [appliedStartDate, setAppliedStartDate] = useState(firstDayOfYear)
   const [appliedEndDate, setAppliedEndDate] = useState(today)
   const [appliedIncludeUnposted, setAppliedIncludeUnposted] = useState(false)
+
+  const {
+    handleDownloadBalanceSheetExcel,
+    handleDownloadBalanceSheetPdf,
+    handleDownloadIncomeStatementExcel,
+    handleDownloadIncomeStatementPdf,
+    isDownloading
+  } = useReportActions()
 
   const handleApplyFilters = () => {
     setAppliedIncludeUnposted(includeUnposted)
@@ -123,6 +137,62 @@ const Reports = () => {
             >
               Generar Informe
             </Button>
+            <ButtonGroup variant="outlined" size="small">
+              <Tooltip title="Exportar a Excel">
+                <Button
+                  onClick={() => {
+                    if (tabIndex === 0) {
+                      void handleDownloadBalanceSheetExcel(
+                        appliedDate,
+                        appliedIncludeUnposted
+                      )
+                    } else {
+                      void handleDownloadIncomeStatementExcel(
+                        appliedStartDate,
+                        appliedEndDate,
+                        appliedIncludeUnposted
+                      )
+                    }
+                  }}
+                  disabled={isDownloading}
+                  color="success"
+                >
+                  {isDownloading ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <FileDownloadIcon />
+                  )}
+                  Excel
+                </Button>
+              </Tooltip>
+              <Tooltip title="Exportar a PDF">
+                <Button
+                  onClick={() => {
+                    if (tabIndex === 0) {
+                      void handleDownloadBalanceSheetPdf(
+                        appliedDate,
+                        appliedIncludeUnposted
+                      )
+                    } else {
+                      void handleDownloadIncomeStatementPdf(
+                        appliedStartDate,
+                        appliedEndDate,
+                        appliedIncludeUnposted
+                      )
+                    }
+                  }}
+                  disabled={isDownloading}
+                  color="error"
+                >
+                  {isDownloading ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <PictureAsPdfIcon />
+                  )}
+                  PDF
+                </Button>
+              </Tooltip>
+            </ButtonGroup>
           </Stack>
         </Box>
       </Paper>

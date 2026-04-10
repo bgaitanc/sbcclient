@@ -14,7 +14,8 @@ export default [
       route('batch', 'routes/Batch.tsx'),
       route('reports', 'routes/Reports.tsx'),
       route('periods', 'routes/AccountingPeriods.tsx'),
-      route('logs', 'routes/Logs.tsx')
+      route('logs', 'routes/Logs.tsx'),
+      route('users', 'routes/Users.tsx')
     ])
   ]),
   route('login', 'routes/LoginPage.tsx')

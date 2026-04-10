@@ -42,6 +42,13 @@ import type {
   TransactionLog,
   TransactionLogFilter
 } from '@shared/types/logs/logTypes.ts'
+import type {
+  UserDto,
+  CreateUserDto,
+  UpdateUserDto,
+  UpdatePasswordDto,
+  UserFilter
+} from '@shared/types/users/userTypes.ts'
 
 const baseQuery = fetchBaseQuery({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- .env
@@ -121,7 +128,8 @@ export const apiSlice = createApi({
     'AccountingPeriods',
     'BulkImports',
     'Dashboard',
-    'Logs'
+    'Logs',
+    'Users'
   ],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
@@ -186,7 +194,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body: newEntry
       }),
-      invalidatesTags: ['JournalEntries']
+      invalidatesTags: ['JournalEntries', 'Dashboard']
     }),
     updateJournalEntry: builder.mutation<
       SuccessResponse<JournalEntry>,
@@ -197,7 +205,11 @@ export const apiSlice = createApi({
         method: 'PUT',
         body: updatedEntry
       }),
-      invalidatesTags: ['JournalEntries', { type: 'JournalEntries' }, 'Dashboard']
+      invalidatesTags: [
+        'JournalEntries',
+        { type: 'JournalEntries' },
+        'Dashboard'
+      ]
     }),
     deleteJournalEntry: builder.mutation<SuccessResponse<void>, string>({
       query: (id) => ({
@@ -299,6 +311,52 @@ export const apiSlice = createApi({
         params: filter
       }),
       providesTags: ['Logs']
+    }),
+    getUsers: builder.query<
+      SuccessResponse<PagedResult<UserDto>>,
+      UserFilter | undefined
+    >({
+      query: (filter) => ({
+        url: '/users',
+        params: filter
+      }),
+      providesTags: ['Users']
+    }),
+    getUserById: builder.query<SuccessResponse<UserDto>, string>({
+      query: (id) => `/users/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Users', id }]
+    }),
+    createUser: builder.mutation<SuccessResponse<string>, CreateUserDto>({
+      query: (newUser) => ({
+        url: '/users',
+        method: 'POST',
+        body: newUser
+      }),
+      invalidatesTags: ['Users']
+    }),
+    updateUser: builder.mutation<
+      SuccessResponse<void>,
+      { id: string; user: UpdateUserDto }
+    >({
+      query: ({ id, user }) => ({
+        url: `/users/${id}`,
+        method: 'PUT',
+        body: user
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        'Users',
+        { type: 'Users', id }
+      ]
+    }),
+    updateUserPassword: builder.mutation<
+      SuccessResponse<void>,
+      { id: string; passwordData: UpdatePasswordDto }
+    >({
+      query: ({ id, passwordData }) => ({
+        url: `/users/${id}/password`,
+        method: 'PUT',
+        body: passwordData
+      })
     })
   })
 })
@@ -327,5 +385,10 @@ export const {
   useGetBulkImportTemplateQuery,
   useLazyGetBulkImportTemplateQuery,
   useGetDashboardSummaryQuery,
-  useGetLogsQuery
+  useGetLogsQuery,
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useUpdateUserPasswordMutation
 } = apiSlice

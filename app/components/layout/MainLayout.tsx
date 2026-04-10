@@ -23,7 +23,8 @@ import {
   BarChart as BarChartIcon,
   History as HistoryIcon,
   Logout as LogoutIcon,
-  CalendarMonth as CalendarMonthIcon
+  CalendarMonth as CalendarMonthIcon,
+  People as PeopleIcon
 } from '@mui/icons-material'
 import { Outlet, useNavigate, useLocation } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@redux/hooks.ts'
@@ -42,7 +43,8 @@ const menuItems = [
   { text: 'Carga Masiva', icon: <CloudUploadIcon />, path: '/batch' },
   { text: 'Estados Financieros', icon: <BarChartIcon />, path: '/reports' },
   { text: 'Periodos Contables', icon: <CalendarMonthIcon />, path: '/periods' },
-  { text: 'Logs del Sistema', icon: <HistoryIcon />, path: '/logs' }
+  { text: 'Logs del Sistema', icon: <HistoryIcon />, path: '/logs' },
+  { text: 'Usuarios', icon: <PeopleIcon />, path: '/users' }
 ]
 
 export default function MainLayout() {

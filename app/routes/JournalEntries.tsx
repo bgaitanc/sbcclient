@@ -28,6 +28,7 @@ import { useGetJournalEntriesQuery } from '@/redux/api/apiSlice'
 import { JournalEntryForm } from '@/modules/journalEntries/components/JournalEntryForm'
 import type { JournalEntry } from '@shared/types/journalEntries/journalEntryTypes'
 import { useJournalEntryActions } from '@/modules/journalEntries/hooks/useJournalEntryActions'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 interface RowProps {
   entry: JournalEntry
@@ -154,6 +155,8 @@ export default function JournalEntries() {
   const { handleDelete } = useJournalEntryActions()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [entryIdToDelete, setEntryIdToDelete] = useState<string | null>(null)
 
   const handleAddNew = () => {
     setSelectedEntry(null)
@@ -165,21 +168,24 @@ export default function JournalEntries() {
     setIsFormOpen(true)
   }
 
-  const onDelete = async (id: string) => {
-    // eslint-disable-next-line no-alert -- Confirmación nativa
-    if (window.confirm('¿Está seguro de eliminar este asiento?')) {
+  const handleDeleteClick = (id: string) => {
+    setEntryIdToDelete(id)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (entryIdToDelete != null) {
       try {
-        await handleDelete(id)
+        await handleDelete(entryIdToDelete)
         void refetch()
       } catch (error) {
         // eslint-disable-next-line no-console -- Error en eliminación
         console.error('Error al eliminar el asiento:', error)
+      } finally {
+        setIsDeleteDialogOpen(false)
+        setEntryIdToDelete(null)
       }
     }
-  }
-
-  const handleDeleteClick = (id: string) => {
-    void onDelete(id)
   }
 
   const handleFormSuccess = () => {
@@ -277,6 +283,21 @@ export default function JournalEntries() {
           />
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        title="Eliminar Asiento"
+        message="¿Está seguro de que desea eliminar este asiento contable? Esta acción no se puede deshacer."
+        onConfirm={() => {
+          void handleConfirmDelete()
+        }}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false)
+          setEntryIdToDelete(null)
+        }}
+        confirmText="Eliminar"
+        color="error"
+      />
     </Box>
   )
 }

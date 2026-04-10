@@ -11,6 +11,8 @@ import type { Account } from '@shared/types/accounts/accountTypes'
 import { useAccountActions } from '../hooks/useAccountActions'
 import SaveIcon from '@mui/icons-material/Save'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { useState } from 'react'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 
 interface AccountFormProps {
   selectedAccount: Account | null
@@ -39,6 +41,8 @@ export const AccountForm = ({
     isAddingChild,
     onSuccess
   )
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const title = isAddingChild
     ? `Agregar Cuenta Hija a: ${selectedAccount?.name}`
@@ -125,10 +129,7 @@ export const AccountForm = ({
               color="error"
               variant="outlined"
               onClick={() => {
-                // eslint-disable-next-line no-alert -- Confirmación nativa de eliminación
-                if (window.confirm('¿Está seguro de eliminar esta cuenta?')) {
-                  void handleDelete()
-                }
+                setIsDeleteDialogOpen(true)
               }}
               disabled={isLoading}
               startIcon={<DeleteIcon />}
@@ -138,6 +139,21 @@ export const AccountForm = ({
           )}
         </Box>
       </Stack>
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        title="Eliminar Cuenta"
+        message={`¿Está seguro de que desea eliminar la cuenta "${selectedAccount?.name}"? Esta acción no se puede deshacer.`}
+        onConfirm={() => {
+          void handleDelete()
+          setIsDeleteDialogOpen(false)
+        }}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false)
+        }}
+        confirmText="Eliminar"
+        color="error"
+      />
     </Box>
   )
 }

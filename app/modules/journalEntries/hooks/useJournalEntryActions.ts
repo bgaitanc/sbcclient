@@ -11,6 +11,8 @@ import type {
 } from '@shared/types/journalEntries/journalEntryTypes'
 import { useFormik } from 'formik'
 import { journalEntrySchema } from '../utils/journalEntry.schema'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 export interface JournalEntryFormValues {
   date: string
@@ -22,6 +24,7 @@ export const useJournalEntryActions = (
   initialData?: JournalEntry | null,
   onSuccess?: () => void
 ) => {
+  const dispatch = useAppDispatch()
   const [createJournalEntry, { isLoading: isCreating }] =
     useCreateJournalEntryMutation()
   const [updateJournalEntry, { isLoading: isUpdating }] =
@@ -57,6 +60,12 @@ export const useJournalEntryActions = (
             lines: values.lines
           }
           await updateJournalEntry(updateData).unwrap()
+          dispatch(
+            showNotification({
+              message: 'Asiento contable actualizado exitosamente',
+              severity: 'success'
+            })
+          )
         } else {
           const createData: CreateJournalEntryReq = {
             date: values.date,
@@ -68,17 +77,44 @@ export const useJournalEntryActions = (
             }))
           }
           await createJournalEntry(createData).unwrap()
+          dispatch(
+            showNotification({
+              message: 'Asiento contable creado exitosamente',
+              severity: 'success'
+            })
+          )
         }
         onSuccess?.()
       } catch (error) {
-        // Error handling is handled by the mutation result/error state if needed
+        dispatch(
+          showNotification({
+            message: 'Error al guardar el asiento contable',
+            severity: 'error'
+          })
+        )
       }
     }
   })
 
   const handleDelete = async (id: string) => {
-    const result = await deleteJournalEntry(id).unwrap()
-    return result
+    try {
+      await deleteJournalEntry(id).unwrap()
+      dispatch(
+        showNotification({
+          message: 'Asiento contable eliminado exitosamente',
+          severity: 'success'
+        })
+      )
+      return { success: true }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al eliminar el asiento contable',
+          severity: 'error'
+        })
+      )
+      return { success: false, error }
+    }
   }
 
   const validateBalance = (lines: Array<{ debit: number; credit: number }>) => {

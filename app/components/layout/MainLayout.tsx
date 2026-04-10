@@ -29,6 +29,11 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router'
 import { useAppDispatch, useAppSelector } from '@redux/hooks.ts'
 import { logout, selectCurrentUser } from '@redux/slices/authSlice.ts'
+import {
+  hideNotification,
+  selectNotification
+} from '@redux/slices/notificationSlice'
+import { Snackbar, Alert } from '@mui/material'
 
 const drawerWidth = 280
 
@@ -53,6 +58,7 @@ export default function MainLayout() {
   const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)
   const theme = useTheme()
+  const notification = useAppSelector(selectNotification)
 
   const handleLogout = () => {
     dispatch(logout())
@@ -203,6 +209,26 @@ export default function MainLayout() {
           <Outlet />
         </Box>
       </Box>
+
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={notification.autoHideDuration}
+        onClose={() => {
+          dispatch(hideNotification())
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => {
+            dispatch(hideNotification())
+          }}
+          severity={notification.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

@@ -10,6 +10,8 @@ import {
   passwordSchema
 } from '../schemas/user.schema'
 import type { UserDto, UpdatePasswordDto } from '@shared/types/users/userTypes'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 interface UserFormValues {
   userName: string
@@ -24,6 +26,7 @@ export const useUserActions = (
   initialData?: UserDto | null,
   onSuccess?: () => void
 ) => {
+  const dispatch = useAppDispatch()
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
   const isEdit = initialData !== null && initialData !== undefined
@@ -41,6 +44,12 @@ export const useUserActions = (
             roles: values.roles
           }
         }).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Usuario actualizado exitosamente',
+            severity: 'success'
+          })
+        )
       } else if (isEdit === false) {
         await createUser({
           userName: values.userName,
@@ -50,10 +59,21 @@ export const useUserActions = (
           lastName: values.lastName,
           roles: values.roles
         }).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Usuario creado exitosamente',
+            severity: 'success'
+          })
+        )
       }
       onSuccess?.()
     } catch {
-      // Error handling is managed by RTK Query
+      dispatch(
+        showNotification({
+          message: 'Error al procesar el usuario',
+          severity: 'error'
+        })
+      )
     }
   }
 
@@ -81,6 +101,7 @@ export const useUserActions = (
 }
 
 export const usePasswordActions = (userId: string, onSuccess?: () => void) => {
+  const dispatch = useAppDispatch()
   const [updatePassword, { isLoading }] = useUpdateUserPasswordMutation()
 
   const formik = useFormik({
@@ -99,9 +120,20 @@ export const usePasswordActions = (userId: string, onSuccess?: () => void) => {
           newPassword: values.newPassword
         }
         await updatePassword({ id: userId, passwordData }).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Contraseña actualizada exitosamente',
+            severity: 'success'
+          })
+        )
         onSuccess?.()
       } catch {
-        // Error handling is managed by RTK Query
+        dispatch(
+          showNotification({
+            message: 'Error al actualizar la contraseña',
+            severity: 'error'
+          })
+        )
       }
     }
   })

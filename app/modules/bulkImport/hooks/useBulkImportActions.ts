@@ -5,8 +5,11 @@ import {
   useLazyGetBulkImportTemplateQuery
 } from '@/redux/api/apiSlice'
 import type { BulkImportFilter } from '@/shared/types/bulkImports/bulkImportTypes'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 export const useBulkImportActions = () => {
+  const dispatch = useAppDispatch()
   const [filter, setFilter] = useState<BulkImportFilter>({
     pageNumber: 1,
     pageSize: 10
@@ -34,8 +37,20 @@ export const useBulkImportActions = () => {
       link.click()
       link.parentNode?.removeChild(link)
       window.URL.revokeObjectURL(url)
+      dispatch(
+        showNotification({
+          message: 'Plantilla descargada exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al descargar la plantilla',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }
@@ -46,8 +61,20 @@ export const useBulkImportActions = () => {
     try {
       await uploadBulkImport(formData).unwrap()
       await refetchHistory()
+      dispatch(
+        showNotification({
+          message: 'Archivo importado exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al importar el archivo',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }

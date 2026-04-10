@@ -4,8 +4,11 @@ import {
   useLazyGetIncomeStatementExcelQuery,
   useLazyGetIncomeStatementPdfQuery
 } from '@/redux/api/apiSlice'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 export const useReportActions = () => {
+  const dispatch = useAppDispatch()
   const [triggerBalanceSheetExcel, { isFetching: isDownloadingBSExcel }] =
     useLazyGetBalanceSheetExcelQuery()
   const [triggerBalanceSheetPdf, { isFetching: isDownloadingBSPdf }] =
@@ -36,8 +39,20 @@ export const useReportActions = () => {
         includeUnposted
       }).unwrap()
       downloadFile(blob, `BalanceGeneral_${date.replace(/-/g, '')}.xlsx`)
+      dispatch(
+        showNotification({
+          message: 'Reporte Excel generado exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al generar el reporte Excel',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }
@@ -52,8 +67,20 @@ export const useReportActions = () => {
         includeUnposted
       }).unwrap()
       downloadFile(blob, `BalanceGeneral_${date.replace(/-/g, '')}.pdf`)
+      dispatch(
+        showNotification({
+          message: 'Reporte PDF generado exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al generar el reporte PDF',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }
@@ -73,8 +100,20 @@ export const useReportActions = () => {
         blob,
         `EstadoDeResultados_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.xlsx`
       )
+      dispatch(
+        showNotification({
+          message: 'Reporte Excel generado exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al generar el reporte Excel',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }
@@ -94,8 +133,20 @@ export const useReportActions = () => {
         blob,
         `EstadoDeResultados_${startDate.replace(/-/g, '')}_${endDate.replace(/-/g, '')}.pdf`
       )
+      dispatch(
+        showNotification({
+          message: 'Reporte PDF generado exitosamente',
+          severity: 'success'
+        })
+      )
       return { success: true }
     } catch (error) {
+      dispatch(
+        showNotification({
+          message: 'Error al generar el reporte PDF',
+          severity: 'error'
+        })
+      )
       return { success: false, error }
     }
   }

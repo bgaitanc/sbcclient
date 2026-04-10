@@ -7,8 +7,11 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import type { Account } from '@shared/types/accounts/accountTypes'
 import { useMemo } from 'react'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 export const useAccountingPeriodActions = (onSuccess?: () => void) => {
+  const dispatch = useAppDispatch()
   const [createPeriod, { isLoading: isCreating }] =
     useCreateAccountingPeriodMutation()
   const [closePeriod, { isLoading: isClosing }] =
@@ -27,8 +30,20 @@ export const useAccountingPeriodActions = (onSuccess?: () => void) => {
     onSubmit: async (values) => {
       try {
         await createPeriod(values).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Periodo contable creado exitosamente',
+            severity: 'success'
+          })
+        )
         onSuccess?.()
       } catch (error) {
+        dispatch(
+          showNotification({
+            message: 'Error al crear el periodo contable',
+            severity: 'error'
+          })
+        )
         console.error('Error creating period:', error)
       }
     }
@@ -50,8 +65,20 @@ export const useAccountingPeriodActions = (onSuccess?: () => void) => {
     onSubmit: async (values) => {
       try {
         await closePeriod(values).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Periodo contable cerrado exitosamente',
+            severity: 'success'
+          })
+        )
         onSuccess?.()
       } catch (error) {
+        dispatch(
+          showNotification({
+            message: 'Error al cerrar el periodo contable',
+            severity: 'error'
+          })
+        )
         console.error('Error closing period:', error)
       }
     }

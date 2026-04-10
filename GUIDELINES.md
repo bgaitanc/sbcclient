@@ -87,6 +87,9 @@ The `sbcclient` is a modern web application (financial management frontend) buil
 
 - **Redux Toolkit**: Use `apiSlice.ts` for all API interactions. Organize `tagTypes` for proper cache invalidation.
 - **Hooks**: Use custom hooks (like `useJournalEntryActions`) to encapsulate business logic and API calls.
+- **Feedback & Notifications**:
+  - **Success/Error Messages**: Use the `showNotification` action from `notificationSlice.ts` to show success or error messages after API operations (create, update, delete, etc.).
+  - **Confirmation Dialogs**: NEVER use native `window.confirm`. Use the `ConfirmDialog` component located in `app/components/shared/ConfirmDialog.tsx`.
 
 ### Testing
 

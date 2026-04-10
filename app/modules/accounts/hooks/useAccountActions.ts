@@ -7,12 +7,15 @@ import {
 } from '@redux/api/apiSlice'
 import type { Account } from '@shared/types/accounts/accountTypes'
 import { useMemo } from 'react'
+import { useAppDispatch } from '@redux/hooks'
+import { showNotification } from '@redux/slices/notificationSlice'
 
 export const useAccountActions = (
   selectedAccount: Account | null,
   isAddingChild: boolean,
   onSuccess: () => void
 ) => {
+  const dispatch = useAppDispatch()
   const [createAccount, { isLoading: isCreating }] = useCreateAccountMutation()
   const [updateAccount, { isLoading: isUpdating }] = useUpdateAccountMutation()
   const [deleteAccount, { isLoading: isDeleting }] = useDeleteAccountMutation()
@@ -60,11 +63,29 @@ export const useAccountActions = (
             id: selectedAccount.id,
             ...values
           }).unwrap()
+          dispatch(
+            showNotification({
+              message: 'Cuenta actualizada exitosamente',
+              severity: 'success'
+            })
+          )
         } else {
           await createAccount(values).unwrap()
+          dispatch(
+            showNotification({
+              message: 'Cuenta creada exitosamente',
+              severity: 'success'
+            })
+          )
         }
         onSuccess()
       } catch (err) {
+        dispatch(
+          showNotification({
+            message: 'Error al procesar la cuenta',
+            severity: 'error'
+          })
+        )
         // eslint-disable-next-line no-console -- Logging de error de API
         console.error('Error saving account:', err)
       }
@@ -75,8 +96,20 @@ export const useAccountActions = (
     if (selectedAccount != null) {
       try {
         await deleteAccount(selectedAccount.id).unwrap()
+        dispatch(
+          showNotification({
+            message: 'Cuenta eliminada exitosamente',
+            severity: 'success'
+          })
+        )
         onSuccess()
       } catch (err) {
+        dispatch(
+          showNotification({
+            message: 'Error al eliminar la cuenta',
+            severity: 'error'
+          })
+        )
         // eslint-disable-next-line no-console -- Logging de error de API
         console.error('Error deleting account:', err)
       }

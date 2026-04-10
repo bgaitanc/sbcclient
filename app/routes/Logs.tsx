@@ -103,6 +103,7 @@ export default function Logs() {
             <TableHead>
               <TableRow>
                 <TableCell>Fecha/Hora</TableCell>
+                <TableCell>Usuario</TableCell>
                 <TableCell>Acción</TableCell>
                 <TableCell>Entidad</TableCell>
                 <TableCell>Estado</TableCell>
@@ -116,6 +117,7 @@ export default function Logs() {
                   <TableCell>
                     {new Date(log.logDate).toLocaleString()}
                   </TableCell>
+                  <TableCell>{log.userEmail}</TableCell>
                   <TableCell>{log.action}</TableCell>
                   <TableCell>
                     {log.entityName}{' '}
@@ -137,7 +139,7 @@ export default function Logs() {
               ))}
               {(response?.data.items.length ?? 0) === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
                     No se encontraron logs.
                   </TableCell>
                 </TableRow>

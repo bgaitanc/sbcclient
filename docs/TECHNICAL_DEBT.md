@@ -27,17 +27,23 @@
 - **Detalle**: El backend expone `PUT /api/accounts/{id:guid}`, mientras que `apiSlice.ts` envía `PUT /accounts` con el `id` únicamente en el cuerpo.
 - **Acción sugerida**: Actualizar la URL en `apiSlice.ts` a `` `/accounts/${updatedAccount.id}` `` y verificar el payload esperado por `UpdateAccountDto`.
 
+### 4. Vulnerabilidades conocidas en dependencias (`pnpm audit`)
+
+- **Ubicación**: `package.json` y `pnpm-lock.yaml` (auditoría al `2026-11-20`).
+- **Detalle**: `pnpm audit` reporta **74 vulnerabilidades** (`0 critical`, `43 high`, `27 moderate`, `4 low`) sobre 505 dependencias, concentradas en `vite` (19), `eslint` (18), `react-router` (12), `eslint-config-love` (11), `@react-router/dev` (10), `formik > lodash-es` (2), `@tailwindcss/vite` (1) y `eslint-plugin-react-hooks` (1).
+- **Acción sugerida**: Ejecutar la hoja de ruta documentada en `docs/MIGRATION.md` (entrada `2026-11-20`) para resolver 72 de las 74 alertas mediante actualización de paquetes y mitigar los 2 avisos restantes de `formik > lodash-es` vía `overrides` en `pnpm-workspace.yaml` (o evaluación futura de librería de formularios).
+
 ---
 
 ## Prioridad Media — Funcionalidad Incompleta y Calidad de Código
 
-### 4. Botón "Ver Asiento de Cierre" sin acción
+### 5. Botón "Ver Asiento de Cierre" sin acción
 
 - **Ubicación**: `app/routes/AccountingPeriods.tsx` (líneas 133–140).
 - **Detalle**: El `IconButton` con `VisibilityIcon` ("Ver Asiento de Cierre") no tiene manejador `onClick` implementado.
 - **Acción sugerida**: Conectar la acción para abrir un modal de detalle o navegar al asiento referenciado por `period.closingJournalEntryId`.
 
-### 5. Ubicación inconsistente de esquemas Yup
+### 6. Ubicación inconsistente de esquemas Yup
 
 - **Ubicación**:
   - `app/modules/users/schemas/user.schema.ts`
@@ -46,7 +52,7 @@
   - Esquemas inline en `app/modules/accounts/hooks/useAccountActions.ts` y `app/modules/accountingPeriods/hooks/useAccountingPeriodActions.ts`
 - **Acción sugerida**: Unificar todos los esquemas de validación bajo `app/modules/<modulo>/schemas/<recurso>.schema.ts`.
 
-### 6. Errores y advertencias preexistentes de ESLint (`pnpm lint`) y manejo de errores
+### 7. Errores y advertencias preexistentes de ESLint (`pnpm lint`) y manejo de errores
 
 Al ejecutar `pnpm lint` sobre el estado base del repositorio se reportan **68 errores y 1 advertencia** en archivos existentes de `app/`:
 
@@ -65,30 +71,46 @@ Al ejecutar `pnpm lint` sobre el estado base del repositorio se reportan **68 er
   - `app/modules/login/hooks/useLoginActions.ts` (líneas 59–62): cast temporal con `TODO` que podría fallar si el error de red no incluye `data.message`.
 - **Acción sugerida**: Resolver progresivamente el backlog de lint (extraer subcomponentes para reducir complejidad, crear un helper tipado para errores `FetchBaseQueryError`, normalizar `ConfirmDialog.tsx` a `LF` y eliminar `console.error` residuales) hasta lograr `pnpm lint` con 0 errores.
 
-### 7. Cobertura de pruebas automatizadas
+### 8. Cobertura de pruebas automatizadas
 
 - **Ubicación**: `package.json`.
 - **Detalle**: No existe actualmente un framework de pruebas unitarias o de componentes configurado.
 - **Acción sugerida**: Configurar **Vitest** + **React Testing Library** y comenzar por cubrir esquemas Yup, helpers de negocio (partida doble, aplanamiento de cuentas) y slices de Redux.
 
+### 9. Dependencias no utilizadas o redundantes en `package.json`
+
+- **Ubicación**: `package.json` (`dependencies` y `devDependencies`), `app/root.tsx` (línea 3), `vite.config.ts` y `eslint.config.js`.
+- **Detalle**:
+  - `react-router-dom`: solo se usa para `import type { LinksFunction }` en `app/root.tsx:3` (ya exportado directamente por `react-router` y eliminado en React Router v8).
+  - `@vitejs/plugin-react`: declarado en `devDependencies` pero no importado en `vite.config.ts` (`@react-router/dev/vite` ya gestiona JSX/Fast Refresh).
+  - `isbot`: declarado en `dependencies` sin uso en `app/` (remanente de plantilla SSR en modo SPA `ssr: false`).
+  - `eslint-plugin-import`, `eslint-plugin-n` y `eslint-plugin-promise`: declarados en `devDependencies` sin importarse en `eslint.config.js` (son dependencias internas de `eslint-config-love`; además `eslint-plugin-import` es incompatible con ESLint 10).
+- **Acción sugerida**: Retirar `react-router-dom` (migrando el import en `app/root.tsx` a `react-router`), `@vitejs/plugin-react`, `isbot` y los plugins redundantes de ESLint durante la migración documentada en `docs/MIGRATION.md`.
+
 ---
 
 ## Prioridad Baja — Higiene y Metadatos
 
-### 8. Atributo de idioma HTML en `app/root.tsx`
+### 10. Atributo de idioma HTML en `app/root.tsx`
 
 - **Ubicación**: `app/root.tsx` (línea 19).
 - **Detalle**: Declara `<html lang="en">` aunque la interfaz completa está en español.
 - **Acción sugerida**: Cambiar a `<html lang="es">`.
 
-### 9. `README.md` de plantilla genérica de Vite
+### 11. `README.md` de plantilla genérica de Vite
 
 - **Ubicación**: `README.md`.
 - **Detalle**: Conserva el texto predeterminado del template React + TypeScript + Vite.
 - **Acción sugerida**: Reemplazarlo con la documentación real de instalación, configuración de `.env.local` y uso de `sbcclient`.
 
-### 10. Fin de línea CRLF en `ConfirmDialog.tsx`
+### 12. Fin de línea CRLF en `ConfirmDialog.tsx`
 
 - **Ubicación**: `app/components/shared/ConfirmDialog.tsx`.
 - **Detalle**: El archivo utiliza `CRLF` mientras `.prettierrc` y `.editorconfig` establecen `LF`.
 - **Acción sugerida**: Normalizar a `LF` ejecutando `pnpm format` en un cambio dedicado de higiene.
+
+### 13. Carpeta `build` omitida en `ignores` de `eslint.config.js`
+
+- **Ubicación**: `eslint.config.js` (línea 11).
+- **Detalle**: Declara `ignores: ['dist', '.react-router']`, pero el build de React Router genera los artefactos de salida en `build/`.
+- **Acción sugerida**: Añadir `'build'` al arreglo de rutas ignoradas en `eslint.config.js`.

@@ -35,7 +35,8 @@ const notificationSlice = createSlice({
 })
 
 export const { showNotification, hideNotification } = notificationSlice.actions
-export const selectNotification = (state: { notification: NotificationState }) =>
-  state.notification
+export const selectNotification = (state: {
+  notification: NotificationState
+}) => state.notification
 
 export default notificationSlice.reducer

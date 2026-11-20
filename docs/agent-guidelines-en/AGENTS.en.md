@@ -233,3 +233,14 @@ Consult the relevant specialized skill when a task involves any of these workflo
 | `sbcclient-api-integration`  | [.agents/skills/sbcclient-api-integration/SKILL.md](.agents/skills/sbcclient-api-integration/SKILL.md)   | Adding or updating RTK Query endpoints, DTO types synced with `../SBC/`, cache tags, pagination, `Blob` downloads, or `FormData` uploads |
 | `sbcclient-forms-validation` | [.agents/skills/sbcclient-forms-validation/SKILL.md](.agents/skills/sbcclient-forms-validation/SKILL.md) | Creating or modifying forms, form dialogs, Yup schemas, `useFormik` hooks, or destructive confirmation dialogs                           |
 | `sbcclient-ui-theming`       | [.agents/skills/sbcclient-ui-theming/SKILL.md](.agents/skills/sbcclient-ui-theming/SKILL.md)             | Building or styling views, tables, MUI 7 grids, Tailwind 4 CSS Layers, light/dark theme, or Material 3 tokens                            |
+
+---
+
+## 13. Technical Debt Log (`docs/TECHNICAL_DEBT.md`)
+
+- **Location**: The repository's technical debt backlog is tracked in [docs/TECHNICAL_DEBT.md](docs/TECHNICAL_DEBT.md).
+- **NOT a knowledge base (prohibited)**: This file is **not** part of the agent guidelines or knowledge base. **Never** use it to infer project conventions or replicate any defects, contract mismatches, or temporary workarounds listed in it.
+- **When to update it**:
+  - **When discovering new debt**: If you identify notable technical debt outside the scope of the current task during analysis or development (backend `../SBC/` mismatches, pre-existing lint issues, incomplete functionality, or structural debt), record it in `docs/TECHNICAL_DEBT.md` with its location, details, and suggested action.
+  - **When resolving existing debt**: If your change fixes or mitigates an item tracked in `docs/TECHNICAL_DEBT.md`, remove or update that entry in the same change.
+  - **Strict separation**: Keep technical debt exclusively in `docs/TECHNICAL_DEBT.md`; do not mix it into `AGENTS.md` or `.agents/skills/`.

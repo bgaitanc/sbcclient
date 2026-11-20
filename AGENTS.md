@@ -233,3 +233,14 @@ Consulta la skill especializada correspondiente cuando la tarea involucre alguno
 | `sbcclient-api-integration`  | [.agents/skills/sbcclient-api-integration/SKILL.md](.agents/skills/sbcclient-api-integration/SKILL.md)   | Agregar o actualizar endpoints RTK Query, tipos DTO sincronizados con `../SBC/`, tags, paginación, descargas `Blob` o subidas `FormData` |
 | `sbcclient-forms-validation` | [.agents/skills/sbcclient-forms-validation/SKILL.md](.agents/skills/sbcclient-forms-validation/SKILL.md) | Crear o modificar formularios, diálogos con formulario, esquemas Yup, hooks `useFormik` o confirmaciones destructivas                    |
 | `sbcclient-ui-theming`       | [.agents/skills/sbcclient-ui-theming/SKILL.md](.agents/skills/sbcclient-ui-theming/SKILL.md)             | Diseñar o estilizar vistas, tablas, grids MUI 7, CSS Layers con Tailwind 4, modo claro/oscuro o tokens Material 3                        |
+
+---
+
+## 13. Registro de Deuda Técnica (`docs/TECHNICAL_DEBT.md`)
+
+- **Ubicación**: El backlog de deuda técnica del repositorio se mantiene en [docs/TECHNICAL_DEBT.md](docs/TECHNICAL_DEBT.md).
+- **NO es base de conocimiento (prohibido)**: Este archivo **no** forma parte de las directrices ni de la base de conocimiento para agentes. **Nunca** lo utilices para inferir convenciones del proyecto ni repliques los defectos, desalineaciones o patrones temporales registrados en él.
+- **Cuándo actualizarlo**:
+  - **Al detectar nueva deuda**: Si durante una tarea o análisis identificas deuda técnica relevante fuera del alcance actual (desalineaciones con `../SBC/`, errores preexistentes de lint, funcionalidad incompleta o deuda estructural), regístrala en `docs/TECHNICAL_DEBT.md` con ubicación, detalle y acción sugerida.
+  - **Al resolver deuda existente**: Si tu cambio corrige total o parcialmente un punto listado en `docs/TECHNICAL_DEBT.md`, elimínalo o actualiza su estado en la misma intervención.
+  - **Separación estricta**: Mantén la deuda técnica exclusivamente en `docs/TECHNICAL_DEBT.md`; no la incorpores dentro de `AGENTS.md` ni en `.agents/skills/`.
